@@ -1,15 +1,3 @@
 <template>
-  <AppShell>
-    <h1>Settings</h1>
-  </AppShell>
+  <h1>Settings</h1>
 </template>
-
-<script>
-import AppShell from './AppShell';
-
-export default {
-  components: {
-    AppShell,
-  },
-};
-</script>

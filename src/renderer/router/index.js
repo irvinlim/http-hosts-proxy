@@ -7,17 +7,19 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/host-mappings',
-    },
-    {
-      path: '/host-mappings',
-      name: 'host-mappings',
-      component: require('@/components/HostMappings').default,
-    },
-    {
-      path: '/settings',
-      name: 'settings',
-      component: require('@/components/Settings').default,
+      component: require('@/components/AppShell').default,
+      children: [
+        {
+          path: '/host-mappings',
+          name: 'host-mappings',
+          component: require('@/components/HostMappings').default,
+        },
+        {
+          path: '/settings',
+          name: 'settings',
+          component: require('@/components/Settings').default,
+        },
+      ],
     },
   ],
 });

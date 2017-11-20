@@ -24,7 +24,7 @@
       </div>
     </aside>
     <section id="main">
-      <slot></slot>
+      <router-view></router-view>
     </section>
   </div>
 </template>
