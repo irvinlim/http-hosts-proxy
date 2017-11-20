@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app-shell">
     <aside id="menu">
       <div class="menu-body">
         <p class="menu-label">
@@ -50,8 +50,13 @@ export default {
 #app {
   display: flex;
   height: 100%;
-  flex-direction: row;
   align-items: stretch;
+}
+
+#app-shell {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
 }
 
 aside#menu {
@@ -73,5 +78,6 @@ aside#menu {
 
 section#main {
   padding: 20px;
+  flex-grow: 1;
 }
 </style>

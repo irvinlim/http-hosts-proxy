@@ -5,6 +5,8 @@
 </template>
 
 <script>
+import 'font-awesome/scss/font-awesome.scss';
+
 export default {
   name: 'dns-switcher-proxy',
 };
@@ -12,11 +14,11 @@ export default {
 
 <style lang="scss">
 @import '~bulma/sass/utilities/_all';
-
 $menu-item-color: $grey-lighter;
 $menu-item-hover-background-color: $white-ter;
 
 @import '~bulma/bulma.sass';
+
 html,
 body {
   width: 100%;

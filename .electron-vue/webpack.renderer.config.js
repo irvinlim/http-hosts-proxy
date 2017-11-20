@@ -24,6 +24,7 @@ let rendererConfig = {
   devtool: '#cheap-module-eval-source-map',
   entry: {
     renderer: path.join(__dirname, '../src/renderer/main.js'),
+    fontawesome: 'font-awesome/scss/font-awesome.scss',
   },
   externals: [
     ...Object.keys(dependencies || {}).filter(
@@ -103,6 +104,14 @@ let rendererConfig = {
             name: 'fonts/[name]--[folder].[ext]',
           },
         },
+      },
+      {
+        test: /font-awesome\.scss/,
+        use: [
+          { loader: 'style-loader' },
+          { loader: 'css-loader' },
+          { loader: 'sass-loader' },
+        ],
       },
     ],
   },
