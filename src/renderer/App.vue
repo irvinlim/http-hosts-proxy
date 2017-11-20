@@ -6,12 +6,17 @@
 
 <script>
 export default {
-  name: 'electron-vue',
+  name: 'dns-switcher-proxy',
 };
 </script>
 
-<style>
-@import '~bulma';
+<style lang="scss">
+@import '~bulma/sass/utilities/_all';
+
+$menu-item-color: $grey-lighter;
+$menu-item-hover-background-color: $white-ter;
+
+@import '~bulma/bulma.sass';
 html,
 body {
   width: 100%;
