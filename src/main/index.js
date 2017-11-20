@@ -1,67 +1,38 @@
 'use strict';
 
-import { app, BrowserWindow } from 'electron';
+import * as tray from './app/tray';
+import * as window from './app/window';
 
-/**
- * Set `__static` path to static files in production
- * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
- */
-if (process.env.NODE_ENV !== 'development') {
-    global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\');
+import { app } from 'electron';
+import proxy from './lib/proxy';
+
+// Set the userData path to separate folders for each environment.
+if (process.env.NODE_ENV !== 'production') {
+  const userDataPath = app.getPath('userData');
+  app.setPath('userData', `${userDataPath} (${process.env.NODE_ENV})`);
 }
 
-let mainWindow;
-const winURL = process.env.NODE_ENV === 'development'
-    ? 'http://localhost:9080'
-    : `file://${__dirname}/index.html`;
+app.on('ready', async () => {
+  // Instantiates the app window.
+  window.create();
 
-function createWindow () {
-    /**
-   * Initial window options
-   */
-    mainWindow = new BrowserWindow({
-        height: 563,
-        useContentSize: true,
-        width: 1000
-    });
+  // Instantiates the tray icon.
+  tray.init();
 
-    mainWindow.loadURL(winURL);
+  // Loads hostname mappings from storage.
+  await proxy.storage.loadFromStorage();
 
-    mainWindow.on('closed', () => {
-        mainWindow = null;
-    });
-}
-
-app.on('ready', createWindow);
-
-app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit();
-    }
+  // Starts the proxy listening on a port.
+  proxy.server.start(5060);
 });
 
-app.on('activate', () => {
-    if (mainWindow === null) {
-        createWindow();
-    }
+// Called when the app wants to quit and wants to start closing all the windows.
+// We have to tell the windows to close, otherwise they will continue to minimize to tray.
+app.on('before-quit', () => {
+  window.prepareForQuit();
 });
 
-/**
- * Auto Updater
- *
- * Uncomment the following code below and install `electron-updater` to
- * support auto updating. Code Signing with a valid certificate is required.
- * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-electron-builder.html#auto-updating
- */
-
-/*
-import { autoUpdater } from 'electron-updater'
-
-autoUpdater.on('update-downloaded', () => {
-  autoUpdater.quitAndInstall()
-})
-
-app.on('ready', () => {
-  if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
-})
- */
+// TODO: Handle uncaught exceptions like ETIMEDOUT.
+process.on('uncaughtException', function(error) {
+  console.error('Uncaught exception: ', error);
+});
