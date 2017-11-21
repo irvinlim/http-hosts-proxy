@@ -4,7 +4,7 @@ import getStore from '../store';
 const store = getStore('settings');
 
 export const getSettings = () => {
-  return store.fetch();
+  return store.fetch() || [];
 };
 
 export const getSetting = key => {

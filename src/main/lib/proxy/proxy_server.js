@@ -93,7 +93,27 @@ proxy.on('error', function(err, req, res) {
   res.end(JSON.stringify(error));
 });
 
-// TODO: Support all other protocols.
+export const isListening = () => {
+  return server.listening;
+};
+
 export const start = port => {
+  if (isListening()) {
+    return;
+  }
+
   server.listen(port);
+};
+
+export const stop = () => {
+  if (!isListening()) {
+    return;
+  }
+
+  return new Promise(resolve => server.close(resolve));
+};
+
+export const restart = async port => {
+  await stop();
+  start(port);
 };

@@ -84,6 +84,8 @@
 </template>
 
 <script>
+import { ipcGet, ipcPut } from '../helpers/ipc';
+
 export default {
   data: () => ({
     // Local state.
@@ -101,20 +103,11 @@ export default {
      * Load mappings from memory, which was pre-loaded from storage.
      */
     async loadMappings() {
-      const ipc = 'proxy.storage.getMappings';
-
       // Reset mappings.
       this.mappings = [];
 
-      // Request mappings via IPC.
-      this.$electron.ipcRenderer.send(ipc);
-
       // Fetch mappings via IPC.
-      const mappings = await new Promise(resolve => {
-        this.$electron.ipcRenderer.once(`${ipc}.data`, (event, data) =>
-          resolve(data)
-        );
-      });
+      const mappings = await ipcGet(this, 'proxy.storage.getMappings');
 
       // Convert dictionary into an array of objects.
       for (let hostname in mappings) {
@@ -166,8 +159,6 @@ export default {
      * Saves mapping to storage.
      */
     async saveMappings() {
-      const ipc = 'proxy.storage.putMappings';
-
       // Convert back to a dictionary.
       const newMappings = {};
 
@@ -183,13 +174,8 @@ export default {
         newMappings[hostname] = address;
       }
 
-      // Save the mapping to storage.
-      this.$electron.ipcRenderer.send(ipc, newMappings);
-
-      // Wait for it to be persisted to disk.
-      await new Promise(resolve => {
-        this.$electron.ipcRenderer.once(`${ipc}.success`, resolve);
-      });
+      // Push via IPC.
+      await ipcPut(this, 'proxy.storage.putMappings', newMappings);
 
       // Reload mappings from storage/memory.
       await this.loadMappings();

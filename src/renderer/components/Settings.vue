@@ -32,9 +32,9 @@
           </div>
           <div class="column is-one-fifth">
             <div class="vert-button-group">
-              <button class="button is-primary" v-if="!isProxyRunning">Start</button>
-              <button class="button is-danger" v-if="isProxyRunning">Stop</button>
-              <button class="button" v-if="isProxyRunning">Restart</button>
+              <button class="button is-primary" v-if="!isProxyRunning" @click="handleClickStart()" :disabled="isSaving">Start</button>
+              <button class="button is-danger" v-if="isProxyRunning" @click="handleClickStop()" ::disabled="isSaving">Stop</button>
+              <button class="button" v-if="isProxyRunning" @click="handleClickRestart()" ::disabled="isSaving">Restart</button>
             </div>
           </div>
         </div>
@@ -44,6 +44,8 @@
 </template>
 
 <script>
+import { ipcGet, ipcAction, ipcReceive } from '../helpers/ipc';
+
 export default {
   data: () => ({
     // Local state.
@@ -56,26 +58,59 @@ export default {
   async mounted() {
     // Load mappings on mount.
     await this.loadSettings();
+    await this.loadProxyStatus();
   },
   methods: {
-    /**
-     * Load settings from main process via IPC.
-     */
     async loadSettings() {
-      const ipc = 'settings.storage.getSettings';
-
-      // Reset mappings.
-      this.mappings = [];
-
-      // Request mappings via IPC.
-      this.$electron.ipcRenderer.send(ipc);
-
-      // Fetch mappings via IPC.
-      this.settings = await new Promise(resolve => {
-        this.$electron.ipcRenderer.once(`${ipc}.data`, (event, data) =>
-          resolve(data)
-        );
+      this.settings = await ipcGet(this, 'settings.storage.getSettings');
+    },
+    async loadProxyStatus() {
+      this.isProxyRunning = await ipcGet(this, 'proxy.server.isListening');
+      ipcReceive(this, 'proxy.server.isListening', data => {
+        this.isProxyRunning = data;
       });
+    },
+
+    async handleClickStart() {
+      // Update saving state.
+      this.isSaving = true;
+
+      // Send the event to the main process.
+      await ipcAction(this, 'proxy.server.start');
+
+      // Restore saving state.
+      this.isSaving = false;
+
+      // Show toast.
+      this.showToast('Server started!', 'check');
+    },
+
+    async handleClickStop() {
+      // Update saving state.
+      this.isSaving = true;
+
+      // Send the event to the main process.
+      await ipcAction(this, 'proxy.server.stop');
+
+      // Restore saving state.
+      this.isSaving = false;
+
+      // Show toast.
+      this.showToast('Server stopped!', 'check');
+    },
+
+    async handleClickRestart() {
+      // Update saving state.
+      this.isSaving = true;
+
+      // Send the event to the main process.
+      await ipcAction(this, 'proxy.server.restart');
+
+      // Restore saving state.
+      this.isSaving = false;
+
+      // Show toast.
+      this.showToast('Server restarted!', 'check');
     },
 
     /**
