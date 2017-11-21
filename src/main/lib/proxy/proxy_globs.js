@@ -15,16 +15,7 @@ let globDomainTree = new DomainNames();
  * @param {Object[]} mappings
  */
 export const populate = mappings => {
-  // Filter only mappings with domain globs in the hostname.
-  const globMappings = mappings.filter(isGlobMapping);
-
-  // Remove the '*' from the hostname.
-  const strippedMappings = globMappings.map(stripGlob);
-
-  // Add hostnames which have a glob to the tree.
-  strippedMappings.forEach(({ globBaseName, ...data }) => {
-    globDomainTree.addDomain(globBaseName, data);
-  });
+  mappings.forEach(addNode);
 };
 
 /**
@@ -37,11 +28,8 @@ export const addNode = mapping => {
     return;
   }
 
-  // Strip out globs from the hostname.
-  const strippedMapping = stripGlob(mapping);
-
   // Add the hostname to the tree.
-  globDomainTree.addDomain(strippedMapping);
+  globDomainTree.addDomain(mapping.hostname, mapping);
 };
 
 /**
@@ -53,7 +41,7 @@ export const addNode = mapping => {
  *
  * @param {string} hostname
  * @return {Object|boolean} Returns the hostname mapping data if a match is found, or
- *                          false otherwise.
+ * false otherwise.
  */
 export const lookupGlob = hostname => {
   // Skip if there are no globs to operate on.
@@ -76,9 +64,12 @@ export const lookupGlob = hostname => {
     if (currentNode.getNode(currentQuery)) {
       // Traverse to the matching child.
       currentNode = currentNode.getNode(currentQuery);
-
       // Pop the top of the stack.
       hostnameParts.pop();
+    } else if (currentNode.getNode('*')) {
+      // If we have reached the leaf node, we can break.
+      currentNode = currentNode.children[0];
+      break;
     } else {
       // No match. Break out of the loop.
       break;
@@ -99,13 +90,3 @@ export const lookupGlob = hostname => {
  * @param {Object} mapping
  */
 const isGlobMapping = mapping => mapping.hostname.indexOf('*.') === 0;
-
-/**
- * Removes the glob portion of the hostname of a hostname mapping.
- * @param {Object} mapping
- */
-const stripGlob = ({ hostname, ...data }) => ({
-  globBaseName: hostname.replace(/(\*\.|\*)/g, ''),
-  hostname,
-  ...data,
-});
