@@ -1,7 +1,8 @@
-import Store from 'electron-store';
+import getStore from '../store';
 import { populate } from './proxy_globs';
 
-export const store = new Store();
+// Get the store with the given filename.
+const store = getStore('hostname_mappings');
 
 // Load hostname mappings into memory.
 let loadedMappings = null;
@@ -11,7 +12,7 @@ let loadedMappingsList = [];
  * Loads hostname mappings from local JSON storage.
  */
 export const loadFromStorage = () => {
-  let mappings = store.get('hostnameMappings');
+  let mappings = store.fetch();
 
   if (!mappings) {
     mappings = {};
@@ -97,7 +98,7 @@ export const deleteMapping = hostname => {
  */
 const saveIntoStorage = () => {
   // Save dictionary of mappings.
-  store.set('hostnameMappings', loadedMappings);
+  store.save(loadedMappings);
 
   // Reload all data structures into memory.
   loadIntoMemory(loadedMappings);

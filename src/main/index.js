@@ -1,6 +1,6 @@
 'use strict';
 
-import './ipc/proxy';
+import './ipc';
 
 import * as tray from './app/tray';
 import * as window from './app/window';
