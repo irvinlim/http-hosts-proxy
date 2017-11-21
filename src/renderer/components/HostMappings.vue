@@ -64,7 +64,6 @@ export default {
   data: () => ({
     // Local state.
     isSaving: false,
-    isSaved: false,
 
     // Form data.
     mappings: [],
@@ -95,12 +94,20 @@ export default {
       // Revert the saving state.
       this.isSaving = false;
 
-      // Show the saved icon.
-      this.showSavedIcon();
+      // Show the saved notification.
+      this.showSavedToast();
     },
 
-    showSavedIcon() {
-      this.isSaved = true;
+    /**
+     * Displays a saved toast notification.
+     */
+    showSavedToast() {
+      this.$toasted.show('Saved!', {
+        icon: 'check',
+        iconPack: 'fontawesome',
+        position: 'bottom-right',
+        duration: 3000,
+      });
     },
 
     /**
