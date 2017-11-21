@@ -99,7 +99,7 @@ export const lookupGlob = hostname => {
       hostnameParts.pop();
     } else if (currentNode.getNode('*')) {
       // If we have reached the leaf node, we can break.
-      currentNode = currentNode.children[0];
+      currentNode = currentNode.getNode('*');
       break;
     } else {
       // No match. Break out of the loop.
