@@ -1,4 +1,4 @@
-import { loadedMappings } from './proxy_storage';
+import { getMapping } from './proxy_storage';
 
 /**
  * Recursively looks up the address that a given hostname should resolve to.
@@ -15,7 +15,7 @@ export const lookup = hostname => {
   }
 
   // Look up hostname in the hostname mappings.
-  const address = loadedMappings[hostname];
+  const address = getMapping(hostname);
 
   // If there is no mapping, the hostname resolves to itself.
   if (!address) {

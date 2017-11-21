@@ -41,7 +41,7 @@ import proxy from '../../main/lib/proxy';
 
 export default {
   data: () => ({
-    mappings: proxy.storage.loadedMappings,
+    mappings: proxy.storage.getMappings(),
   }),
 };
 </script>
