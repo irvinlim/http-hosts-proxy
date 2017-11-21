@@ -46,6 +46,18 @@ export const getMapping = hostname => {
 };
 
 /**
+ * Performs a complete replacement of all mappings.
+ * @param {object} mappings
+ */
+export const replaceMappings = mappings => {
+  // Replace mappings in memory.
+  loadedMappings = mappings;
+
+  // Persist changes to disk.
+  return saveIntoStorage();
+};
+
+/**
  * Adds or updates the hostname mapping for a given hostname to a given address.
  * Also saves the mapping to local storage.
  * @param {string} hostname
