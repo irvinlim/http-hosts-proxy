@@ -80,7 +80,7 @@ aside#menu {
 }
 
 section#main {
-  padding: 20px;
+  padding: 30px 40px;
   flex-grow: 1;
   overflow-y: auto;
 }

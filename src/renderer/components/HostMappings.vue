@@ -1,10 +1,24 @@
 <template>
   <div>
     <header>
-      <h1>Host Mappings</h1>
+      <h1 class="title is-3">Host Mappings</h1>
     </header>
 
     <section class="main">
+      <article class="message">
+        <div class="message-header">
+          <p>Instructions</p>
+          <button class="delete" aria-label="delete"></button>
+        </div>
+        <div class="message-body">
+          <p class="is-size-7">Enter the hostnames that you wish to resolve using DNS Switcher Proxy. The address can be either an IP address or domain name.</p>
+          <p class="is-size-7">You may use * as a wildcard to resolve a range of hostnames, e.g. <code>*.mywebsite.local</code>. Absolute hostname mappings are matched first, followed by wildcard hostnames.</p>
+          <p class="is-size-7">
+            <em>You can view these instructions again anytime by clicking the <span class="icon"><i class="fa fa-question-circle"></i></span> icon.</em>
+          </p>
+        </div>
+      </article>
+
       <div class="columns" v-for="(mapping, index) in mappings" :key="index">
         <div class="column">
           <div class="field">
