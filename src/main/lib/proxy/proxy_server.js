@@ -20,8 +20,15 @@ server.on('request', function(req, res) {
   // Default Host header to the parsed host in the URL.
   const hostHeader = req.headers.host || host;
 
+  console.info(`Using ${hostHeader} as the Host header.`);
+
   // Recursively lookup address that hostname should resolve to.
   const resolved = lookup(hostname);
+
+  // Logging
+  if (hostname !== resolved) {
+    console.info(`Resolved ${hostname} to ${resolved}.`);
+  }
 
   // Proxy HTTP(S) requests.
   proxy.web(req, res, {

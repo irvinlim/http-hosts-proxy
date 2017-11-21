@@ -49,12 +49,12 @@ export const getMapping = hostname => {
  * Performs a complete replacement of all mappings.
  * @param {object} mappings
  */
-export const replaceMappings = mappings => {
+export const putMappings = mappings => {
   // Replace mappings in memory.
   loadedMappings = mappings;
 
   // Persist changes to disk.
-  return saveIntoStorage();
+  saveIntoStorage();
 };
 
 /**
@@ -71,13 +71,12 @@ export const upsertMapping = (hostname, address) => {
   loadedMappings[hostname] = address;
 
   // Persist the change to disk.
-  return saveIntoStorage();
+  saveIntoStorage();
 };
 
 /**
  * Deletes the hostname mapping for a given address.
  * @param {string} hostname
- * @return {Promise} Resolves once the changes are persisted to disk.
  */
 export const deleteMapping = hostname => {
   // Load mappings if necessary first.
@@ -87,7 +86,7 @@ export const deleteMapping = hostname => {
   delete loadedMappings[hostname];
 
   // Persist the change to disk.
-  return saveIntoStorage();
+  saveIntoStorage();
 };
 
 /**

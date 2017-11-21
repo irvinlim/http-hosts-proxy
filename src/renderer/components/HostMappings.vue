@@ -70,8 +70,6 @@
 </template>
 
 <script>
-import proxy from '../../main/lib/proxy';
-
 export default {
   data: () => ({
     // Local state.
@@ -80,22 +78,31 @@ export default {
     // Form data.
     mappings: [],
   }),
-  mounted() {
+  async mounted() {
     // Load mappings on mount.
-    this.loadMappings();
+    await this.loadMappings();
   },
   methods: {
     /**
      * Load mappings from memory, which was pre-loaded from storage.
      */
-    loadMappings() {
+    async loadMappings() {
+      const ipc = 'proxy.storage.getMappings';
+
       // Reset mappings.
       this.mappings = [];
 
-      // Fetch dictionary of hostname mappings.
-      const mappings = proxy.storage.getMappings();
+      // Request mappings via IPC.
+      this.$electron.ipcRenderer.send(ipc);
 
-      // Convert to array of objects.
+      // Fetch mappings via IPC.
+      const mappings = await new Promise(resolve => {
+        this.$electron.ipcRenderer.once(`${ipc}.data`, (event, data) =>
+          resolve(data)
+        );
+      });
+
+      // Convert dictionary into an array of objects.
       for (let hostname in mappings) {
         this.mappings.push({ hostname, address: mappings[hostname] });
       }
@@ -131,7 +138,7 @@ export default {
       // Change the saving state and revert once done.
       this.isSaving = true;
 
-      // Synchronously save to disk.
+      // Save changes to disk.
       await this.saveMappings();
 
       // Revert the saving state.
@@ -145,6 +152,8 @@ export default {
      * Saves mapping to storage.
      */
     async saveMappings() {
+      const ipc = 'proxy.storage.putMappings';
+
       // Convert back to a dictionary.
       const newMappings = {};
 
@@ -161,10 +170,15 @@ export default {
       }
 
       // Save the mapping to storage.
-      await proxy.storage.replaceMappings(newMappings);
+      this.$electron.ipcRenderer.send(ipc, newMappings);
+
+      // Wait for it to be persisted to disk.
+      await new Promise(resolve => {
+        this.$electron.ipcRenderer.once(`${ipc}.success`, resolve);
+      });
 
       // Reload mappings from storage/memory.
-      this.loadMappings();
+      await this.loadMappings();
     },
 
     /**
