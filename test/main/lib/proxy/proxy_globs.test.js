@@ -2,15 +2,18 @@
 
 /* eslint-env mocha */
 
-import {
-  lookupGlob,
-  populate,
-} from '../../../../src/main/lib/proxy/proxy_globs';
-
 import { expect } from 'chai';
+import proxy from '../../../../src/main/lib/proxy';
+
+const { lookupGlob, populate, countLeaves } = proxy.globs;
 
 describe('lib.proxy.globs', function() {
   describe('#lookupGlob', function() {
+    beforeEach(function() {
+      populate([]);
+      expect(countLeaves()).to.be.eq(0);
+    });
+
     it('should return false when the tree is empty', function() {
       expect(lookupGlob('test.example.com')).to.be.false;
     });

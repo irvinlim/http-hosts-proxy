@@ -2,14 +2,12 @@
 
 /* eslint-env mocha */
 
-import {
-  getMappings,
-  putMappings,
-} from '../../../../src/main/lib/proxy/proxy_storage';
-
-import { countLeaves } from '../../../../src/main/lib/proxy/proxy_globs';
 import { expect } from 'chai';
-import { lookup } from '../../../../src/main/lib/proxy/proxy_lookup';
+import proxy from '../../../../src/main/lib/proxy';
+
+const { getMappings, putMappings } = proxy.storage;
+const { countLeaves } = proxy.globs;
+const { lookup } = proxy.lookup;
 
 describe('lib.proxy.lookup', function() {
   describe('#lookup', function() {
