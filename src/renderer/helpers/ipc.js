@@ -40,9 +40,10 @@ export const ipcReceive = (self, event, callback) => {
  */
 export const ipcAction = (self, event) => {
   self.$electron.ipcRenderer.send(event);
-  return new Promise(resolve =>
-    self.$electron.ipcRenderer.once(`${event}.success`, resolve)
-  );
+  return new Promise((resolve, reject) => {
+    self.$electron.ipcRenderer.once(`${event}.success`, resolve);
+    self.$electron.ipcRenderer.once(`${event}.fail`, reject);
+  });
 };
 
 /**

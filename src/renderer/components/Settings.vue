@@ -96,13 +96,17 @@ export default {
       await this.saveListeningPort();
 
       // Send the event to the main process.
-      await ipcAction(this, 'proxy.server.start');
+      try {
+        await ipcAction(this, 'proxy.server.start');
+        this.showToast('Server started!', 'check');
+      } catch (err) {
+        const port = this.settings.listeningPort;
+        const errorMessage = `Could not start server at port ${port}.`;
+        this.showToast(errorMessage, 'times');
+      }
 
       // Restore saving state.
       this.isSaving = false;
-
-      // Show toast.
-      this.showToast('Server started!', 'check');
     },
 
     async handleClickStop() {
@@ -127,13 +131,17 @@ export default {
       await this.saveListeningPort();
 
       // Send the event to the main process.
-      await ipcAction(this, 'proxy.server.restart');
+      try {
+        await ipcAction(this, 'proxy.server.restart');
+        this.showToast('Server restarted!', 'check');
+      } catch (err) {
+        const port = this.settings.listeningPort;
+        const errorMessage = `Could not start server at port ${port}.`;
+        this.showToast(errorMessage, 'times');
+      }
 
       // Restore saving state.
       this.isSaving = false;
-
-      // Show toast.
-      this.showToast('Server restarted!', 'check');
     },
 
     /**

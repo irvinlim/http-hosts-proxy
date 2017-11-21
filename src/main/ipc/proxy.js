@@ -7,15 +7,17 @@ import settings from '../lib/settings';
  *
  * Allows ipcRenderers to start the proxy server.
  */
-ipcMain.on('proxy.server.start', event => {
+ipcMain.on('proxy.server.start', async event => {
   // Get listening port number from settings.
   const listeningPort = settings.storage.getSetting('listeningPort', 0);
 
   // Start the server.
-  proxy.server.start(listeningPort);
-
-  // Push success event.
-  event.sender.send('proxy.server.start.success');
+  try {
+    await proxy.server.start(listeningPort);
+    event.sender.send('proxy.server.start.success');
+  } catch (err) {
+    event.sender.send('proxy.server.start.fail');
+  }
 
   // Push isListening event.
   const isListening = proxy.server.isListening();
@@ -57,7 +59,12 @@ ipcMain.on('proxy.server.restart', async event => {
   const listeningPort = settings.storage.getSetting('listeningPort', 0);
 
   // Restart the server.
-  await proxy.server.restart(listeningPort);
+  try {
+    await proxy.server.restart(listeningPort);
+    event.sender.send('proxy.server.restart.success');
+  } catch (err) {
+    event.sender.send('proxy.server.restart.fail');
+  }
 
   // Push success event.
   event.sender.send('proxy.server.restart.success');

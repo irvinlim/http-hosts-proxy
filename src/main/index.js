@@ -15,7 +15,7 @@ if (process.env.NODE_ENV !== 'production') {
   app.setPath('userData', `${userDataPath} (${process.env.NODE_ENV})`);
 }
 
-app.on('ready', () => {
+app.on('ready', async () => {
   // Get listening port number from settings.
   const listeningPort = settings.storage.getSetting('listeningPort', 0);
 
@@ -23,7 +23,11 @@ app.on('ready', () => {
   proxy.storage.loadFromStorage();
 
   // Starts the proxy listening on a port.
-  proxy.server.start(listeningPort);
+  try {
+    await proxy.server.start(listeningPort);
+  } catch (err) {
+    //
+  }
 
   // Instantiates the app window.
   window.create();

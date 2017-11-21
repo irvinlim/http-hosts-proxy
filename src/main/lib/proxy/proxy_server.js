@@ -106,7 +106,14 @@ export const start = port => {
     return;
   }
 
+  // Start listening on port.
   server.listen(port);
+
+  // Wait on either listening or error events to resolve the Promise.
+  return new Promise((resolve, reject) => {
+    server.on('listening', resolve);
+    server.on('error', reject);
+  });
 };
 
 export const stop = () => {
@@ -119,5 +126,5 @@ export const stop = () => {
 
 export const restart = async port => {
   await stop();
-  start(port);
+  await start(port);
 };
