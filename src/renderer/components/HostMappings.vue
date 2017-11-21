@@ -31,7 +31,7 @@
                 type="text"
                 placeholder="Address to resolve to (e.g. 8.8.8.8)"
                 v-model="mapping.address"
-                v-validate="{ required: true }"
+                v-validate="{ required: true, valid_address: true }"
                 data-vv-as="address"
                 >
             </div>
@@ -122,6 +122,12 @@ export default {
      * Handler for save button click.
      */
     async handleClickSave() {
+      // Prevent saving if there are validation errors.
+      if (this.errors.any()) {
+        this.showToast('Please fix errors before saving.', 'times');
+        return;
+      }
+
       // Change the saving state and revert once done.
       this.isSaving = true;
 
@@ -132,7 +138,7 @@ export default {
       this.isSaving = false;
 
       // Show the saved notification.
-      this.showToast('Saved!');
+      this.showToast('Saved!', 'check');
     },
 
     /**
@@ -164,9 +170,9 @@ export default {
     /**
      * Displays a saved toast notification.
      */
-    showToast(message) {
+    showToast(message, icon) {
       this.$toasted.show(message, {
-        icon: 'check',
+        icon,
         iconPack: 'fontawesome',
         position: 'bottom-right',
         duration: 3000,
