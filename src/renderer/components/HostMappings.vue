@@ -5,7 +5,7 @@
     </header>
 
     <section class="main">
-      <div class="columns" v-for="mapping in mappings" :key="mapping.hostname">
+      <div class="columns" v-for="(mapping, index) in mappings" :key="index">
         <div class="column">
           <div class="field">
             <div class="control">
@@ -13,7 +13,8 @@
             </div>
           </div>
         </div>
-        <div class="column"><div class="field">
+        <div class="column">
+          <div class="field">
             <div class="control">
               <input class="input is-small" type="text" v-model="mapping.address" placeholder="Address to resolve to (e.g. 8.8.8.8)">
             </div>
@@ -22,14 +23,7 @@
         <div class="column edit-actions">
           <div class="columns is-gapless">
             <div class="column">
-              <button class="button is-small">
-                <span class="icon">
-                  <i class="fa fa-copy"></i>
-                </span>
-              </button>
-            </div>
-            <div class="column">
-              <button class="button is-small">
+              <button class="button is-small" @click="handleClickDelete(index)">
                 <span class="icon">
                   <i class="fa fa-trash"></i>
                 </span>
@@ -40,7 +34,7 @@
       </div>
       <div class="columns">
         <div class="column">
-          <button class="button is-small add-new">
+          <button class="button is-small add-new" @click="handleClickAddNew()">
             <span class="icon">
               <i class="fa fa-plus-circle"></i>
             </span>
@@ -82,6 +76,23 @@ export default {
   },
   methods: {
     /**
+     * Handler for delete button click.
+     */
+    handleClickDelete(index) {
+      this.mappings.splice(index, 1);
+    },
+
+    /**
+     * Handler for add new button click.
+     */
+    handleClickAddNew() {
+      this.mappings.push({
+        hostname: '',
+        address: '',
+      });
+    },
+
+    /**
      * Handler for save button click.
      */
     async handleClickSave() {
@@ -95,19 +106,7 @@ export default {
       this.isSaving = false;
 
       // Show the saved notification.
-      this.showSavedToast();
-    },
-
-    /**
-     * Displays a saved toast notification.
-     */
-    showSavedToast() {
-      this.$toasted.show('Saved!', {
-        icon: 'check',
-        iconPack: 'fontawesome',
-        position: 'bottom-right',
-        duration: 3000,
-      });
+      this.showToast('Saved!');
     },
 
     /**
@@ -125,6 +124,18 @@ export default {
 
       // Save the mapping to storage.
       await proxy.storage.replaceMappings(newMappings);
+    },
+
+    /**
+     * Displays a saved toast notification.
+     */
+    showToast(message) {
+      this.$toasted.show(message, {
+        icon: 'check',
+        iconPack: 'fontawesome',
+        position: 'bottom-right',
+        duration: 3000,
+      });
     },
   },
 };
