@@ -8,9 +8,9 @@ import * as window from './app/window';
 import { app } from 'electron';
 import proxy from './lib/proxy';
 
-app.on('ready', async () => {
+app.on('ready', () => {
   // Loads hostname mappings from storage.
-  await proxy.storage.loadFromStorage();
+  proxy.storage.loadFromStorage();
 
   // Starts the proxy listening on a port.
   proxy.server.start(5060);
