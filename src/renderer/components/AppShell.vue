@@ -7,7 +7,7 @@
         </p>
         <ul class="menu-list is-dark">
           <li v-for="item in menuItems" :key="item.link">
-            <router-link :to="item.link">{{ item.label }}</router-link>
+            <router-link :to="item.link" active-class="is-active">{{ item.label }}</router-link>
           </li>
         </ul>
       </div>

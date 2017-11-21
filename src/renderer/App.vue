@@ -14,8 +14,10 @@ export default {
 
 <style lang="scss">
 @import '~bulma/sass/utilities/_all';
-$menu-item-color: $grey-lighter;
-$menu-item-hover-background-color: $white-ter;
+$menu-item-color: $grey;
+$menu-item-hover-background-color: transparent;
+$menu-item-hover-color: $grey-light;
+$menu-item-active-background-color: transparent;
 
 @import '~bulma/bulma.sass';
 
