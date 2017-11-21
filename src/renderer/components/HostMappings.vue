@@ -63,18 +63,29 @@ export default {
     mappings: [],
   }),
   mounted() {
-    // Fetch dictionary of hostname mappings
-    const mappings = proxy.storage.getMappings();
-
-    // Convert to array of objects.
-    for (let hostname in mappings) {
-      this.mappings.push({
-        hostname,
-        address: mappings[hostname],
-      });
-    }
+    // Load mappings on mount.
+    this.loadMappings();
   },
   methods: {
+    /**
+     * Load mappings from memory, which was pre-loaded from storage.
+     */
+    loadMappings() {
+      // Reset mappings.
+      this.mappings = [];
+
+      // Fetch dictionary of hostname mappings.
+      const mappings = proxy.storage.getMappings();
+
+      // Convert to array of objects.
+      for (let hostname in mappings) {
+        this.mappings.push({
+          hostname,
+          address: mappings[hostname],
+        });
+      }
+    },
+
     /**
      * Handler for delete button click.
      */
@@ -119,11 +130,20 @@ export default {
       // Iterate through all mapping objects.
       for (let mapping of this.mappings) {
         const { hostname, address } = mapping;
+
+        // Skip any entries which have missing values.
+        if (!hostname || !address) {
+          continue;
+        }
+
         newMappings[hostname] = address;
       }
 
       // Save the mapping to storage.
       await proxy.storage.replaceMappings(newMappings);
+
+      // Reload mappings from storage/memory.
+      this.loadMappings();
     },
 
     /**
