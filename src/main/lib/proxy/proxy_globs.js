@@ -56,6 +56,11 @@ export const addNode = mapping => {
  *                          false otherwise.
  */
 export const lookupGlob = hostname => {
+  // Skip if there are no globs to operate on.
+  if (globDomainTree.root.children.length <= 0) {
+    return false;
+  }
+
   // Start from the root of the tree.
   let currentNode = globDomainTree.root;
 
