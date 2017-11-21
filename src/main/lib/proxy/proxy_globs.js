@@ -15,6 +15,10 @@ let globDomainTree = new DomainNames();
  * @param {Object[]} mappings
  */
 export const populate = mappings => {
+  // Recreate the tree.
+  globDomainTree = new DomainNames();
+
+  // Add all nodes.
   mappings.forEach(addNode);
 };
 

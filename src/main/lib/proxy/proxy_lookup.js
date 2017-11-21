@@ -21,6 +21,7 @@ export const lookup = hostname => {
   // If there is no exact match, attempt to match a glob.
   if (!address) {
     const mapping = lookupGlob(hostname);
+
     if (mapping) {
       address = mapping.address;
     }
