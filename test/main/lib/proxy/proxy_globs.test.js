@@ -68,5 +68,15 @@ describe('lib.proxy.globs', function() {
         .to.have.property('address')
         .with.equal('8.7.6.5');
     });
+
+    it('should return the correct mapping if there are nested globs', function() {
+      populate([
+        { hostname: '*.test.example.com', address: '1.2.3.4' },
+        { hostname: '*.example.com', address: '8.7.6.5' },
+      ]);
+      expect(lookupGlob('test.example.com'))
+        .to.have.property('address')
+        .with.equal('8.7.6.5');
+    });
   });
 });

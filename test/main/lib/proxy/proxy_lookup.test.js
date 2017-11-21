@@ -55,9 +55,20 @@ describe('lib.proxy.lookup', function() {
         'hello.mysite.net': '5.6.7.8',
       });
       expect(lookup('example.com')).to.be.equal('example.com');
+      expect(lookup('test.example.com')).to.be.equal('1.2.3.4');
       expect(lookup('another.test.example.com')).to.be.equal('1.2.3.4');
       expect(lookup('yet.another.test.example.com')).to.be.equal('1.2.3.4');
-      expect(lookup('test.example.com')).to.be.equal('1.2.3.4');
+    });
+
+    it('should resolve nested glob hostnames correctly', function() {
+      putMappings({
+        '*.test.example.com': '1.2.3.4',
+        '*.example.com': '5.6.7.8',
+      });
+      expect(lookup('example.com')).to.be.equal('example.com');
+      expect(lookup('test.example.com')).to.be.equal('5.6.7.8');
+      expect(lookup('another.test.example.com')).to.be.equal('1.2.3.4');
+      expect(lookup('yet.another.test.example.com')).to.be.equal('1.2.3.4');
     });
   });
 });
