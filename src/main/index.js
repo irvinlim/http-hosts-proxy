@@ -8,6 +8,12 @@ import * as window from './app/window';
 import { app } from 'electron';
 import proxy from './lib/proxy';
 
+// Set the userData path to separate folders for each environment.
+if (process.env.NODE_ENV !== 'production') {
+  const userDataPath = app.getPath('userData');
+  app.setPath('userData', `${userDataPath} (${process.env.NODE_ENV})`);
+}
+
 app.on('ready', () => {
   // Loads hostname mappings from storage.
   proxy.storage.loadFromStorage();
