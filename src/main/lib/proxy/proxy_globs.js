@@ -23,6 +23,33 @@ export const populate = mappings => {
 };
 
 /**
+ * Counts the number of leaves in the tree. This will be equal to the number of
+ * domain names that are added to the tree.
+ * @return {number} Total number of leaves in the tree.
+ */
+export const countLeaves = () => {
+  const queue = [];
+
+  // Enqueue all children of the root node.
+  globDomainTree.root.children.forEach(child => queue.push(child));
+
+  // Maintain a count.
+  let count = 0;
+
+  while (queue.length > 0) {
+    const node = queue.shift();
+
+    if (node.children.length > 0) {
+      node.children.forEach(child => queue.push(child));
+    } else {
+      count++;
+    }
+  }
+
+  return count;
+};
+
+/**
  * Inserts a node into the tree.
  * @param {Object} mapping
  */
