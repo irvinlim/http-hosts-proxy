@@ -84,36 +84,60 @@ export const lookupGlob = hostname => {
   let currentNode = globDomainTree.root;
 
   // Split the hostname by '.' separator.
-  // We will iterate this as a stack.
+  // We will iterate this as a stack from right to left.
   const hostnameParts = hostname.split('.');
 
-  while (currentNode.children.length > 0 && hostnameParts.length > 0) {
+  /**
+   * Traverses the domain name tree to recursively find the furthest leaf node (i.e. nodes that
+   * end with '*') that can be traversed to which follows a path as given by hostnameParts.
+   * @param {DomainName} currentNode
+   * @param {string[]} hostnameParts
+   */
+  const traverseTree = (currentNode, hostnameParts) => {
+    // Handle base case: Failed query.
+    if (currentNode.children.length <= 0 || hostnameParts.length <= 0) {
+      return false;
+    }
+
     // Peek the top of the stack.
     let currentQuery = hostnameParts[hostnameParts.length - 1];
 
-    // Match the children of the current node.
-    if (currentNode.getNode(currentQuery)) {
-      // Traverse to the matching child.
-      currentNode = currentNode.getNode(currentQuery);
-      // Pop the top of the stack.
-      hostnameParts.pop();
-    } else if (currentNode.getNode('*')) {
-      // If we have reached the leaf node, we can break.
-      currentNode = currentNode.getNode('*');
-      break;
-    } else {
-      // No match. Break out of the loop.
-      break;
+    // Find matching nodes, if available.
+    const queryNode = currentNode.getNode(currentQuery);
+    const leafNode = currentNode.getNode('*');
+
+    // Create a new array with the last element popped off.
+    const popped = hostnameParts.slice(0, hostnameParts.length - 1);
+
+    // Handle special case of nested globs: Need to branch here.
+    // Try to resolve the longer chain; otherwise we fallback to the shorter one.
+    if (queryNode && leafNode) {
+      return traverseTree(queryNode, popped) || leafNode;
     }
+
+    // Otherwise, if we have a query node, we traverse down to the queryNode.
+    if (queryNode) {
+      return traverseTree(queryNode, popped);
+    }
+
+    // Otherwise, we check if we have reached leaf node.
+    if (leafNode) {
+      return leafNode;
+    }
+
+    return false;
+  };
+
+  // Run the tree traversal.
+  const furthestLeafNode = traverseTree(currentNode, hostnameParts);
+
+  // Handle failed queries.
+  if (!furthestLeafNode) {
+    return false;
   }
 
-  // Only if we have reached a leaf node and we have hostname segments left over,
-  // does it mean that the given hostname matches the glob in the tree.
-  if (hostnameParts.length > 0 && currentNode.children.length <= 0) {
-    return { ...currentNode.data };
-  }
-
-  return false;
+  // Return the hostname mapping.
+  return { ...furthestLeafNode.data };
 };
 
 /**
