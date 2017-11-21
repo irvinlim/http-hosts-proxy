@@ -10,6 +10,10 @@ export default new Router({
       component: require('@/components/AppShell').default,
       children: [
         {
+          path: '/',
+          redirect: '/host-mappings',
+        },
+        {
           path: '/host-mappings',
           name: 'host-mappings',
           component: require('@/components/HostMappings').default,
