@@ -44,12 +44,22 @@ server.on('request', function(req, res) {
   });
 });
 
-// Handle HTTP CONNECT requests, which emits 'upgrade' events.
+// Handle HTTP CONNECT requests for proxying HTTPS requests.
 server.on('connect', function(req, socket) {
-  // Extract hostname and port from the CONENCT request URL.
+  // Extract hostname and port from the CONNECT request URL.
   const [hostname, port] = req.url.split(':', 2);
 
-  const conn = net.connect(port, hostname, function() {
+  // Recursively lookup address that hostname should resolve to.
+  const resolved = lookup(hostname);
+
+  // Logging
+  if (hostname !== resolved) {
+    const oldUrl = req.url;
+    const newUrl = `${resolved}:${port}`;
+    log.info(`Resolved ${oldUrl} to ${newUrl}.`);
+  }
+
+  const conn = net.connect(port, resolved, function() {
     // Respond to client that connection was made.
     const responseLines = [
       'HTTP/1.1 200 Connection Established',
