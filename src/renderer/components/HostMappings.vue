@@ -9,15 +9,33 @@
         <div class="column">
           <div class="field">
             <div class="control">
-              <input class="input is-small" type="text" v-model="mapping.hostname" placeholder="Hostname (e.g. google.com)">
+              <input
+                :class="['input is-small', { 'is-danger': errors.has(`hostname[${index}]`) }]"
+                :name="'hostname[' + index + ']'"
+                type="text"
+                placeholder="Hostname (e.g. google.com)"
+                v-model="mapping.hostname"
+                v-validate="{ required: true, valid_hostname: true }"
+                data-vv-as="hostname"
+                >
             </div>
+            <p class="help is-danger" v-if="errors.has(`hostname[${index}]`)">{{ errors.first(`hostname[${index}]`) }}</p>
           </div>
         </div>
         <div class="column">
           <div class="field">
             <div class="control">
-              <input class="input is-small" type="text" v-model="mapping.address" placeholder="Address to resolve to (e.g. 8.8.8.8)">
+              <input
+                :class="['input is-small', { 'is-danger': errors.has(`address[${index}]`) }]"
+                :name="'address[' + index + ']'"
+                type="text"
+                placeholder="Address to resolve to (e.g. 8.8.8.8)"
+                v-model="mapping.address"
+                v-validate="{ required: true }"
+                data-vv-as="address"
+                >
             </div>
+            <p class="help is-danger" v-if="errors.has(`address[${index}]`)">{{ errors.first(`address[${index}]`) }}</p>
           </div>
         </div>
         <div class="column edit-actions">
@@ -79,10 +97,7 @@ export default {
 
       // Convert to array of objects.
       for (let hostname in mappings) {
-        this.mappings.push({
-          hostname,
-          address: mappings[hostname],
-        });
+        this.mappings.push({ hostname, address: mappings[hostname] });
       }
     },
 
