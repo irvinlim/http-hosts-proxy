@@ -1,6 +1,7 @@
 import URL from 'url-parse';
 import http from 'http';
 import httpProxy from 'http-proxy';
+import log from 'electron-log';
 import { lookup } from './proxy_lookup';
 import net from 'net';
 
@@ -12,7 +13,7 @@ const server = http.createServer();
 
 // Handle HTTP requests.
 server.on('request', function(req, res) {
-  let { protocol, host, hostname, port } = new URL(req.url);
+  let { protocol, host, hostname, port, pathname, query } = new URL(req.url);
 
   // Default to HTTP if not specified.
   port = port || 80;
@@ -20,14 +21,14 @@ server.on('request', function(req, res) {
   // Default Host header to the parsed host in the URL.
   const hostHeader = req.headers.host || host;
 
-  console.info(`Using ${hostHeader} as the Host header.`);
-
   // Recursively lookup address that hostname should resolve to.
   const resolved = lookup(hostname);
 
   // Logging
   if (hostname !== resolved) {
-    console.info(`Resolved ${hostname} to ${resolved}.`);
+    const oldUrl = req.url;
+    const newUrl = `${protocol}//${resolved}:${port}${pathname}${query}`;
+    log.info(`Resolved ${oldUrl} to ${newUrl}.`);
   }
 
   // Proxy HTTP(S) requests.
