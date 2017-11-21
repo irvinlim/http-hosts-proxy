@@ -80,6 +80,10 @@ export default {
       });
     },
     async saveListeningPort() {
+      // Only allow integer port numbers.
+      this.settings.listeningPort = parseInt(this.settings.listeningPort) || '';
+
+      // Construct data to save.
       const data = {
         key: 'listeningPort',
         value: this.settings.listeningPort,
