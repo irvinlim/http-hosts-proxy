@@ -97,6 +97,10 @@ export const isListening = () => {
   return server.listening;
 };
 
+export const getAddress = () => {
+  return server.address();
+};
+
 export const start = port => {
   if (isListening()) {
     return;

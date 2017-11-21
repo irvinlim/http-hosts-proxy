@@ -11,7 +11,9 @@
             <p class="title is-5">Proxy Server</p>
 
             <p class="subtitle">
-              <span :class="['tag', { 'is-primary': isProxyRunning, 'is-danger': !isProxyRunning }]">{{ isProxyRunning ? 'Running' : 'Stopped' }}</span>
+              <span :class="['tag', { 'is-primary': isProxyRunning, 'is-danger': !isProxyRunning }]">
+                {{ isProxyRunning ? `Running on ${proxyAddress && proxyAddress.address}:${proxyAddress && proxyAddress.port}` : 'Stopped' }}
+              </span>
             </p>
 
             <div class="columns is-gapless">
@@ -22,9 +24,9 @@
                 <input
                   class="input is-small"
                   type="text"
-                  name="proxyPortNumber"
+                  name="listeningPort"
                   placeholder="5060"
-                  v-model="settings.proxyPortNumber"
+                  v-model="settings.listeningPort"
                   >
               </div>
             </div>
@@ -43,7 +45,7 @@
 </template>
 
 <script>
-import { ipcGet, ipcAction, ipcReceive } from '../helpers/ipc';
+import { ipcGet, ipcAction, ipcPut, ipcReceive } from '../helpers/ipc';
 
 export default {
   data: () => ({
@@ -53,11 +55,13 @@ export default {
     // Form data.
     settings: {},
     isProxyRunning: false,
+    proxyAddress: null,
   }),
   async mounted() {
     // Load mappings on mount.
     await this.loadSettings();
     await this.loadProxyStatus();
+    await this.loadProxyAddress();
   },
   methods: {
     async loadSettings() {
@@ -69,10 +73,27 @@ export default {
         this.isProxyRunning = data;
       });
     },
+    async loadProxyAddress() {
+      this.proxyAddress = await ipcGet(this, 'proxy.server.getAddress');
+      ipcReceive(this, 'proxy.server.getAddress', data => {
+        this.proxyAddress = data;
+      });
+    },
+    async saveListeningPort() {
+      const data = {
+        key: 'listeningPort',
+        value: this.settings.listeningPort,
+      };
+
+      await ipcPut(this, 'settings.storage.saveSetting', data);
+    },
 
     async handleClickStart() {
       // Update saving state.
       this.isSaving = true;
+
+      // Save the port number first.
+      await this.saveListeningPort();
 
       // Send the event to the main process.
       await ipcAction(this, 'proxy.server.start');
@@ -101,6 +122,9 @@ export default {
     async handleClickRestart() {
       // Update saving state.
       this.isSaving = true;
+
+      // Save the port number first.
+      await this.saveListeningPort();
 
       // Send the event to the main process.
       await ipcAction(this, 'proxy.server.restart');

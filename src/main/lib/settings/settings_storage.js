@@ -7,8 +7,8 @@ export const getSettings = () => {
   return store.fetch() || [];
 };
 
-export const getSetting = key => {
-  return store.get(key);
+export const getSetting = (key, defaultValue) => {
+  return store.get(key) || defaultValue;
 };
 
 export const saveSetting = (key, value) => {

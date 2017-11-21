@@ -7,6 +7,7 @@ import * as window from './app/window';
 
 import { app } from 'electron';
 import proxy from './lib/proxy';
+import settings from './lib/settings';
 
 // Set the userData path to separate folders for each environment.
 if (process.env.NODE_ENV !== 'production') {
@@ -15,11 +16,14 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 app.on('ready', () => {
+  // Get listening port number from settings.
+  const listeningPort = settings.storage.getSetting('listeningPort', 0);
+
   // Loads hostname mappings from storage.
   proxy.storage.loadFromStorage();
 
   // Starts the proxy listening on a port.
-  proxy.server.start(5060);
+  proxy.server.start(listeningPort);
 
   // Instantiates the app window.
   window.create();
