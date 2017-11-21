@@ -1,4 +1,5 @@
 import { getMapping } from './proxy_storage';
+import { lookupGlob } from './proxy_globs';
 
 /**
  * Recursively looks up the address that a given hostname should resolve to.
@@ -15,7 +16,15 @@ export const lookup = hostname => {
   }
 
   // Look up hostname in the hostname mappings.
-  const address = getMapping(hostname);
+  let address = getMapping(hostname);
+
+  // If there is no exact match, attempt to match a glob.
+  if (!address) {
+    const mapping = lookupGlob(hostname);
+    if (mapping) {
+      address = mapping.address;
+    }
+  }
 
   // If there is no mapping, the hostname resolves to itself.
   if (!address) {

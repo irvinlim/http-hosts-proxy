@@ -22,8 +22,8 @@ export const populate = mappings => {
   const strippedMappings = globMappings.map(stripGlob);
 
   // Add hostnames which have a glob to the tree.
-  strippedMappings.forEach(({ hostname, ...data }) => {
-    globDomainTree.addDomain(hostname, data);
+  strippedMappings.forEach(({ globBaseName, ...data }) => {
+    globDomainTree.addDomain(globBaseName, data);
   });
 };
 
@@ -83,7 +83,7 @@ export const lookupGlob = hostname => {
   // Only if we have reached a leaf node and we have hostname segments left over,
   // does it mean that the given hostname matches the glob in the tree.
   if (hostnameParts.length > 0 && currentNode.children.length <= 0) {
-    return { ...currentNode.data, hostname };
+    return { ...currentNode.data };
   }
 
   return false;
@@ -100,6 +100,7 @@ const isGlobMapping = mapping => mapping.hostname.indexOf('*.') === 0;
  * @param {Object} mapping
  */
 const stripGlob = ({ hostname, ...data }) => ({
-  hostname: hostname.replace(/(\*\.|\*)/g, ''),
+  globBaseName: hostname.replace(/(\*\.|\*)/g, ''),
+  hostname,
   ...data,
 });

@@ -24,6 +24,8 @@ module.exports = {
     semi: ['error', 'always'],
     'no-console': 'off',
 
+    'no-unused-vars': ['error', { varsIgnorePattern: '^_.*' }],
+
     // allow paren-less arrow functions
     'arrow-parens': 0,
     // allow async-await
