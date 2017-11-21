@@ -57,6 +57,8 @@ export default {
   display: flex;
   flex-direction: row;
   width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 aside#menu {
@@ -80,5 +82,6 @@ aside#menu {
 section#main {
   padding: 20px;
   flex-grow: 1;
+  overflow-y: auto;
 }
 </style>
