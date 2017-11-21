@@ -103,7 +103,7 @@ export const getAddress = () => {
 
 export const start = port => {
   if (isListening()) {
-    return;
+    return Promise.resolve();
   }
 
   // Start listening on port.
@@ -118,7 +118,7 @@ export const start = port => {
 
 export const stop = () => {
   if (!isListening()) {
-    return;
+    return Promise.resolve();
   }
 
   return new Promise(resolve => server.close(resolve));
