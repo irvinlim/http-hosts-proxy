@@ -17,7 +17,7 @@ module.exports = {
   globals: {
     __static: true,
   },
-  plugins: ['html', 'prettier'],
+  plugins: ['html', 'prettier', 'mocha'],
   rules: {
     'linebreak-style': ['error', 'unix'],
     quotes: ['error', 'single'],
