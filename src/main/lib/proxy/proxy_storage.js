@@ -1,9 +1,11 @@
 import Store from 'electron-store';
+import { populate } from './proxy_hostnames';
 
 export const store = new Store();
 
 // Load hostname mappings into memory.
 let loadedMappings = null;
+let loadedMappingsList = [];
 
 /**
  * Loads hostname mappings from local JSON storage.
@@ -16,7 +18,7 @@ export const loadFromStorage = () => {
   }
 
   // Load into memory.
-  loadedMappings = mappings;
+  loadIntoMemory(mappings);
 };
 
 /**
@@ -51,7 +53,7 @@ export const getMapping = hostname => {
  */
 export const putMappings = mappings => {
   // Replace mappings in memory.
-  loadedMappings = mappings;
+  loadIntoMemory(mappings);
 
   // Persist changes to disk.
   saveIntoStorage();
@@ -94,5 +96,33 @@ export const deleteMapping = hostname => {
  * @return {Promise} Resolves once the changes are persisted to disk.
  */
 const saveIntoStorage = () => {
+  // Save dictionary of mappings.
   store.set('hostnameMappings', loadedMappings);
+
+  // Reload all data structures into memory.
+  loadIntoMemory(loadedMappings);
+};
+
+const loadIntoMemory = mappings => {
+  // Save dictionary to memory.
+  loadedMappings = mappings;
+
+  // Convert to array for easy iteration.
+  loadedMappingsList = convertDictToArray(loadedMappings);
+
+  // Reload domain tree for fast glob lookups.
+  populate(loadedMappingsList);
+};
+
+const convertDictToArray = mappingsDict => {
+  const array = [];
+
+  for (let hostname in mappingsDict) {
+    array.push({
+      hostname,
+      address: mappingsDict[hostname],
+    });
+  }
+
+  return array;
 };

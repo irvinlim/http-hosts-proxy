@@ -14,13 +14,14 @@ Vue.use(VeeValidate);
 
 // Add custom Validators here.
 const hostnameRegex = /(?=^.{1,254}$)(^(?:[a-zA-Z0-9_\\-]{1,63}\.?)+(?:[a-zA-Z]{2,})$)/;
+const globHostnameRegex = /(?=^.{1,254}$)(^(?:\*\.)?(?:[a-zA-Z0-9_\\-]{1,63}\.?)+(?:[a-zA-Z]{2,})$)/;
 
 VeeValidate.Validator.extend('valid_hostname', {
   getMessage() {
     return 'The hostname is invalid.';
   },
   validate(value) {
-    return hostnameRegex.test(value);
+    return globHostnameRegex.test(value);
   },
 });
 
