@@ -70,5 +70,25 @@ describe('lib.proxy.lookup', function() {
       expect(lookup('another.test.example.com')).to.be.equal('1.2.3.4');
       expect(lookup('yet.another.test.example.com')).to.be.equal('1.2.3.4');
     });
+
+    it('should resolve absolute hostnames before glob hostnames', function() {
+      putMappings({
+        '*.example.com': '5.6.7.8',
+        'test.example.com': '1.2.3.4',
+      });
+      expect(lookup('test.example.com')).to.be.equal('1.2.3.4');
+      expect(lookup('test2.example.com')).to.be.equal('5.6.7.8');
+    });
+
+    it('should recursively resolve glob hostnames into absolute hostnames', function() {
+      putMappings({
+        '*.example.com': 'test.example.com',
+        'test.example.com': '1.2.3.4',
+      });
+      expect(lookup('example.com')).to.be.equal('example.com');
+      expect(lookup('test.example.com')).to.be.equal('1.2.3.4');
+      expect(lookup('test2.example.com')).to.be.equal('1.2.3.4');
+      expect(lookup('test3.test.example.com')).to.be.equal('1.2.3.4');
+    });
   });
 });
