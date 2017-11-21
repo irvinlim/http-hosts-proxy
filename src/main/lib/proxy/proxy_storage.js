@@ -1,5 +1,5 @@
 import Store from 'electron-store';
-import { populate } from './proxy_hostnames';
+import { populate } from './proxy_globs';
 
 export const store = new Store();
 
