@@ -10,9 +10,8 @@
           <div class="column">
             <p class="title is-5">Proxy Server</p>
 
-            <p class="subtitle is-6">
-              The proxy server is
-              <strong :class="{ 'is-success': isProxyRunning, 'is-danger': !isProxyRunning }">{{ !isProxyRunning && 'not' || '' }} running</strong>.
+            <p class="subtitle">
+              <span :class="['tag', { 'is-primary': isProxyRunning, 'is-danger': !isProxyRunning }]">{{ isProxyRunning ? 'Running' : 'Stopped' }}</span>
             </p>
 
             <div class="columns is-gapless">
@@ -32,9 +31,9 @@
           </div>
           <div class="column is-one-fifth">
             <div class="vert-button-group">
-              <button class="button is-primary" v-if="!isProxyRunning" @click="handleClickStart()" :disabled="isSaving">Start</button>
-              <button class="button is-danger" v-if="isProxyRunning" @click="handleClickStop()" ::disabled="isSaving">Stop</button>
-              <button class="button" v-if="isProxyRunning" @click="handleClickRestart()" ::disabled="isSaving">Restart</button>
+              <button class="button is-primary is-outlined" v-if="!isProxyRunning" @click="handleClickStart()" :disabled="isSaving">Start</button>
+              <button class="button is-danger is-outlined" v-if="isProxyRunning" @click="handleClickStop()" ::disabled="isSaving">Stop</button>
+              <button class="button is-info is-outlined" v-if="isProxyRunning" @click="handleClickRestart()" ::disabled="isSaving">Restart</button>
             </div>
           </div>
         </div>
