@@ -42,6 +42,22 @@ export const ipcAction = event => {
 };
 
 /**
+ * Uses IPC to perform a POST request to the main process. Depends on the
+ * main process to invoke the "success" event once the data has been
+ * successfully sent.
+ *
+ * @param {Event} event
+ * @param {*} data
+ * @return {Promise}
+ */
+export const ipcPost = (event, data) => {
+  ipcRenderer.send(event, data);
+  return new Promise(resolve =>
+    ipcRenderer.once(`${event}.data`, (event, data) => resolve(data))
+  );
+};
+
+/**
  * Uses IPC to perform a PUT request to the main process. Depends on the
  * main process to invoke the "success" event once the data has been
  * successfully sent.

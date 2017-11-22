@@ -2,15 +2,24 @@ import { ipcMain } from 'electron';
 import settings from '../lib/settings';
 
 /**
- * GET proxy.storage.mappings
+ * GET proxy.storage.getSettings
  *
  * Allows ipcRenderers to fetch app settings from the main process.
  */
 ipcMain.on('settings.storage.getSettings', event => {
-  const mappings = settings.storage.getSettings();
+  const data = settings.storage.getSettings();
+  event.sender.send('settings.storage.getSettings.data', data);
+});
 
-  // Reply back via IPC to send data over.
-  event.sender.send('settings.storage.getSettings.data', mappings);
+/**
+ * POST proxy.storage.getSetting
+ *
+ * Allows ipcRenderers to fetch app settings from the main process.
+ */
+ipcMain.on('settings.storage.getSetting', (event, data) => {
+  const { key, defaultValue } = data;
+  const setting = settings.storage.getSetting(key, defaultValue);
+  event.sender.send('settings.storage.getSetting.data', setting);
 });
 
 /**
@@ -20,10 +29,6 @@ ipcMain.on('settings.storage.getSettings', event => {
  */
 ipcMain.on('settings.storage.saveSetting', (event, data) => {
   const { key, value } = data;
-
-  // Store data into storage.
   settings.storage.saveSetting(key, value);
-
-  // Reply back via IPC that it was successful.
   event.sender.send('settings.storage.saveSetting.success');
 });
