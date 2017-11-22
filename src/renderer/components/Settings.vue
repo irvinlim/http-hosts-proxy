@@ -11,9 +11,7 @@
             <p class="title is-5">Proxy Server</p>
 
             <p class="subtitle">
-              <span :class="['tag', { 'is-primary': isProxyRunning, 'is-danger': !isProxyRunning }]">
-                {{ isProxyRunning ? `Running on ${proxyAddress && proxyAddress.address}:${proxyAddress && proxyAddress.port}` : 'Stopped' }}
-              </span>
+              <server-status-tag></server-status-tag>
             </p>
 
             <div class="columns is-gapless">
@@ -46,8 +44,12 @@
 
 <script>
 import { ipcGet, ipcAction, ipcPut, ipcReceive } from '../helpers/ipc';
+import ServerStatusTag from './ServerStatusTag';
 
 export default {
+  components: {
+    ServerStatusTag,
+  },
   data: () => ({
     // Local state.
     isSaving: false,
@@ -55,13 +57,11 @@ export default {
     // Form data.
     settings: {},
     isProxyRunning: false,
-    proxyAddress: null,
   }),
   async mounted() {
     // Load mappings on mount.
     await this.loadSettings();
     await this.loadProxyStatus();
-    await this.loadProxyAddress();
   },
   methods: {
     async loadSettings() {
@@ -71,12 +71,6 @@ export default {
       this.isProxyRunning = await ipcGet(this, 'proxy.server.isListening');
       ipcReceive(this, 'proxy.server.isListening', data => {
         this.isProxyRunning = data;
-      });
-    },
-    async loadProxyAddress() {
-      this.proxyAddress = await ipcGet(this, 'proxy.server.getAddress');
-      ipcReceive(this, 'proxy.server.getAddress', data => {
-        this.proxyAddress = data;
       });
     },
     async saveListeningPort() {
