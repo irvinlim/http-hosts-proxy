@@ -1,35 +1,36 @@
 <template>
-  <span :class="['tag', { 'is-primary': isProxyRunning, 'is-danger': !isProxyRunning }]">
-    {{ isProxyRunning ? `Running on ${proxyAddressString}` : 'Stopped' }}
-  </span>
+  <div class="server-status-tag">
+    <p>
+      Server status:
+      <span :class="['tag', { 'is-primary': isRunning, 'is-danger': !isRunning }]">
+        {{ isRunning ? `Running` : 'Stopped' }}
+      </span>
+    </p>
+    <p v-if="isRunning">
+      Listening on:
+      <span class="tag">
+        {{ address }}
+      </span>
+    </p>
+  </div>
 </template>
 
 <script>
-import { ipcGet, ipcReceive } from '../helpers/ipc';
+import { mapState } from 'vuex';
 
 export default {
-  data: () => ({
-    isProxyRunning: false,
-    proxyAddressString: '',
+  computed: mapState({
+    isRunning: state => state.ProxyServer.isRunning,
+    address: state => state.ProxyServer.address,
   }),
-  async mounted() {
-    await this.loadProxyStatus();
-    await this.loadProxyAddress();
-  },
-  methods: {
-    async loadProxyAddress() {
-      this.proxyAddress = await ipcGet(this, 'proxy.server.getAddress');
-      ipcReceive(this, 'proxy.server.getAddress', data => {
-        const { port } = data;
-        this.proxyAddressString = `localhost:${port}`;
-      });
-    },
-    async loadProxyStatus() {
-      this.isProxyRunning = await ipcGet(this, 'proxy.server.isListening');
-      ipcReceive(this, 'proxy.server.isListening', data => {
-        this.isProxyRunning = data;
-      });
-    },
-  },
 };
 </script>
+
+<style lang="scss">
+.server-status-tag {
+  p {
+    margin-bottom: 5px;
+  }
+}
+</style>
+

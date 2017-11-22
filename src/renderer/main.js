@@ -4,6 +4,7 @@ import VeeValidate from 'vee-validate';
 import Vue from 'vue';
 import ip from 'ip';
 import router from './router';
+import store from './store';
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'));
 Vue.config.productionTip = false;
@@ -40,5 +41,6 @@ VeeValidate.Validator.extend('valid_address', {
 new Vue({
   components: { App },
   router,
+  store,
   template: '<App/>',
 }).$mount('#app');

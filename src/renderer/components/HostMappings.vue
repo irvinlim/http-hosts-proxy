@@ -94,10 +94,12 @@ export default {
     // Form data.
     mappings: [],
   }),
+
   async mounted() {
     // Load mappings on mount.
     await this.loadMappings();
   },
+
   methods: {
     /**
      * Load mappings from memory, which was pre-loaded from storage.
@@ -107,7 +109,7 @@ export default {
       this.mappings = [];
 
       // Fetch mappings via IPC.
-      const mappings = await ipcGet(this, 'proxy.storage.getMappings');
+      const mappings = await ipcGet('proxy.storage.getMappings');
 
       // Convert dictionary into an array of objects.
       for (let hostname in mappings) {
@@ -175,7 +177,7 @@ export default {
       }
 
       // Push via IPC.
-      await ipcPut(this, 'proxy.storage.putMappings', newMappings);
+      await ipcPut('proxy.storage.putMappings', newMappings);
 
       // Reload mappings from storage/memory.
       await this.loadMappings();

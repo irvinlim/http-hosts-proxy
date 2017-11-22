@@ -12,8 +12,7 @@
         </ul>
       </div>
       <div class="menu-footer">
-        <p class="footer-text">Server status:</p>
-        <server-status-tag style="margin-bottom: 20px"></server-status-tag>
+        <server-status-tag class="footer-text" style="margin-bottom: 20px"></server-status-tag>
         <p class="footer-text" v-if="isProduction">
           Version {{ versionNumber }} by <a href="https://irvinlim.com/">Irvin Lim</a>
         </p>
@@ -39,6 +38,7 @@ export default {
   components: {
     ServerStatusTag,
   },
+
   data: () => ({
     menuItems: [
       { link: 'host-mappings', label: 'Host Mappings' },

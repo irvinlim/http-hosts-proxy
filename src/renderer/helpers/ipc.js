@@ -1,17 +1,16 @@
+import { ipcRenderer } from 'electron';
+
 /**
  * Uses IPC to perform a GET request from the main process. Depends on the
  * main process to invoke the "data" event once the data is ready.
  *
- * @param {Vue} self
  * @param {Event} event
  * @return {Promise}
  */
-export const ipcGet = (self, event) => {
-  self.$electron.ipcRenderer.send(event);
+export const ipcGet = event => {
+  ipcRenderer.send(event);
   return new Promise(resolve =>
-    self.$electron.ipcRenderer.once(`${event}.data`, (event, data) =>
-      resolve(data)
-    )
+    ipcRenderer.once(`${event}.data`, (event, data) => resolve(data))
   );
 };
 
@@ -19,14 +18,11 @@ export const ipcGet = (self, event) => {
  * Uses IPC to receive data from the main process. Depends on the main process
  * to call the "data" event to push the data to the ipcRenderer.
  *
- * @param {Vue} self
  * @param {Event} event
  * @param {Function} callbacl
  */
-export const ipcReceive = (self, event, callback) => {
-  self.$electron.ipcRenderer.on(`${event}.data`, (event, data) =>
-    callback(data)
-  );
+export const ipcReceive = (event, callback) => {
+  ipcRenderer.on(`${event}.data`, (event, data) => callback(data));
 };
 
 /**
@@ -34,15 +30,14 @@ export const ipcReceive = (self, event, callback) => {
  * main process to invoke the "success" event once the data has been
  * successfully sent.
  *
- * @param {Vue} self
  * @param {Event} event
  * @return {Promise}
  */
-export const ipcAction = (self, event) => {
-  self.$electron.ipcRenderer.send(event);
+export const ipcAction = event => {
+  ipcRenderer.send(event);
   return new Promise((resolve, reject) => {
-    self.$electron.ipcRenderer.once(`${event}.success`, resolve);
-    self.$electron.ipcRenderer.once(`${event}.fail`, reject);
+    ipcRenderer.once(`${event}.success`, resolve);
+    ipcRenderer.once(`${event}.fail`, reject);
   });
 };
 
@@ -51,14 +46,11 @@ export const ipcAction = (self, event) => {
  * main process to invoke the "success" event once the data has been
  * successfully sent.
  *
- * @param {Vue} self
  * @param {Event} event
  * @param {*} data
  * @return {Promise}
  */
-export const ipcPut = (self, event, data) => {
-  self.$electron.ipcRenderer.send(event, data);
-  return new Promise(resolve =>
-    self.$electron.ipcRenderer.once(`${event}.success`, resolve)
-  );
+export const ipcPut = (event, data) => {
+  ipcRenderer.send(event, data);
+  return new Promise(resolve => ipcRenderer.once(`${event}.success`, resolve));
 };

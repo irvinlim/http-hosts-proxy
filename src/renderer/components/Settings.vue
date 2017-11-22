@@ -43,36 +43,37 @@
 </template>
 
 <script>
-import { ipcGet, ipcAction, ipcPut, ipcReceive } from '../helpers/ipc';
+import { ipcGet, ipcAction, ipcPut } from '../helpers/ipc';
 import ServerStatusTag from './ServerStatusTag';
+import { mapState } from 'vuex';
 
 export default {
   components: {
     ServerStatusTag,
   },
+
   data: () => ({
     // Local state.
     isSaving: false,
 
     // Form data.
     settings: {},
-    isProxyRunning: false,
   }),
+
   async mounted() {
     // Load mappings on mount.
     await this.loadSettings();
-    await this.loadProxyStatus();
   },
+
+  computed: mapState({
+    isProxyRunning: state => state.ProxyServer.isRunning,
+  }),
+
   methods: {
     async loadSettings() {
-      this.settings = await ipcGet(this, 'settings.storage.getSettings');
+      this.settings = await ipcGet('settings.storage.getSettings');
     },
-    async loadProxyStatus() {
-      this.isProxyRunning = await ipcGet(this, 'proxy.server.isListening');
-      ipcReceive(this, 'proxy.server.isListening', data => {
-        this.isProxyRunning = data;
-      });
-    },
+
     async saveListeningPort() {
       // Only allow integer port numbers.
       this.settings.listeningPort = parseInt(this.settings.listeningPort) || '';
@@ -83,7 +84,7 @@ export default {
         value: this.settings.listeningPort,
       };
 
-      await ipcPut(this, 'settings.storage.saveSetting', data);
+      await ipcPut('settings.storage.saveSetting', data);
     },
 
     async handleClickStart() {
@@ -95,7 +96,7 @@ export default {
 
       // Send the event to the main process.
       try {
-        await ipcAction(this, 'proxy.server.start');
+        await ipcAction('proxy.server.start');
         this.showToast('Server started!', 'check');
       } catch (err) {
         const port = this.settings.listeningPort;
@@ -112,7 +113,7 @@ export default {
       this.isSaving = true;
 
       // Send the event to the main process.
-      await ipcAction(this, 'proxy.server.stop');
+      await ipcAction('proxy.server.stop');
 
       // Restore saving state.
       this.isSaving = false;
@@ -130,7 +131,7 @@ export default {
 
       // Send the event to the main process.
       try {
-        await ipcAction(this, 'proxy.server.restart');
+        await ipcAction('proxy.server.restart');
         this.showToast('Server restarted!', 'check');
       } catch (err) {
         const port = this.settings.listeningPort;

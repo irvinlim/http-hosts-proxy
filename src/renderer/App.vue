@@ -6,9 +6,32 @@
 
 <script>
 import 'font-awesome/scss/font-awesome.scss';
+import { ipcAction } from './helpers/ipc';
+import { mapActions } from 'vuex';
 
 export default {
   name: 'dns-switcher-proxy',
+  async mounted() {
+    // Starts the proxy server.
+    await ipcAction('proxy.server.start');
+
+    // Hydrate the Vuex store from IPC GET.
+    this.updateProxyServerStatus();
+    this.updateProxyServerAddress();
+
+    // Start event listeners to dispatch Vuex actions on update.
+    this.listenProxyServerStatus();
+    this.listenProxyServerAddress();
+  },
+  methods: {
+    // Map actions from Vuex.
+    ...mapActions([
+      'updateProxyServerStatus',
+      'updateProxyServerAddress',
+      'listenProxyServerStatus',
+      'listenProxyServerAddress',
+    ]),
+  },
 };
 </script>
 
