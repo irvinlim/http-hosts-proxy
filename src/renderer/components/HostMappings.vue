@@ -1,21 +1,24 @@
 <template>
   <div class="container is-fluid">
-    <header>
-      <h1 class="title is-3">Host Mappings</h1>
+    <header class="header">
+      <h1 class="title is-3">
+        <span>Host Mappings</span>
+      </h1>
     </header>
 
     <section class="main">
       <article class="message">
         <div class="message-header">
           <p>Instructions</p>
-          <button class="delete" aria-label="delete"></button>
         </div>
         <div class="message-body">
           <p class="is-size-7">Enter the hostnames that you wish to resolve using DNS Switcher Proxy. The address can be either an IP address or domain name.</p>
-          <p class="is-size-7">You may use * as a wildcard to resolve a range of hostnames, e.g. <code>*.mywebsite.local</code>. Absolute hostname mappings are matched first, followed by wildcard hostnames.</p>
-          <p class="is-size-7">
-            <em>You can view these instructions again anytime by clicking the <span class="icon"><i class="fa fa-question-circle"></i></span> icon.</em>
-          </p>
+          <br>
+          <p class="is-size-7"><strong>Wildcard Hostnames</strong></p>
+          <p class="is-size-7">You may use <code>*</code> as a wildcard to resolve a range of hostnames, e.g. <code>*.mywebsite.local</code>. Absolute hostname mappings are matched first, followed by wildcard hostnames.</p>
+          <br>
+          <p class="is-size-7"><strong>Recursive Mappings</strong></p>
+          <p class="is-size-7">You may map a hostname to another hostname in the list, as they will be recursively resolved. This may be useful if you often have to switch the addresses for a group of hostnames.</p>
         </div>
       </article>
 
