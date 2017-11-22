@@ -21,8 +21,8 @@ const winURL =
 export const create = () => {
   // Creates a window.
   mainWindow = createWindow('main', {
-    width: 800,
-    height: 600,
+    width: 1200,
+    height: 900,
   });
 
   // Load the main HTML page.
