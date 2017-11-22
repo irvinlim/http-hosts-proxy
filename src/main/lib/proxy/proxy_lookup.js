@@ -10,28 +10,42 @@ import { lookupGlob } from './proxy_globs';
  *                  FQDN is returned, then the upstream DNS server will resolve it instead.
  */
 export const lookup = hostname => {
-  // Handle null hostnames.
-  if (!hostname || !hostname.length) {
-    return null;
-  }
-
-  // Look up hostname in the hostname mappings.
-  let address = getMapping(hostname);
-
-  // If there is no exact match, attempt to match a glob.
-  if (!address) {
-    const mapping = lookupGlob(hostname);
-
-    if (mapping) {
-      address = mapping.address;
+  // Helper method to keep track of visited entries.
+  const lookupHelper = (hostname, visited) => {
+    // Handle null hostnames.
+    if (!hostname || !hostname.length) {
+      return null;
     }
-  }
 
-  // If there is no mapping, the hostname resolves to itself.
-  if (!address) {
-    return hostname;
-  }
+    // Look up hostname in the hostname mappings.
+    let address = getMapping(hostname);
 
-  // Otherwise, we recursively get mappings.
-  return lookup(address);
+    // If there is no exact match, attempt to match a glob.
+    if (!address) {
+      const mapping = lookupGlob(hostname);
+
+      if (mapping) {
+        address = mapping.address;
+      }
+    }
+
+    // If there is no mapping, the hostname resolves to itself.
+    if (!address) {
+      return hostname;
+    }
+
+    // Base case: We have visited the next node before.
+    // This node should be the result.
+    if (visited.indexOf(address) >= 0) {
+      return hostname;
+    }
+
+    // Add the resolved address into the visited array.
+    visited.push(address);
+
+    // Otherwise, we recursively get mappings.
+    return lookupHelper(address, visited);
+  };
+
+  return lookupHelper(hostname, [hostname]);
 };
