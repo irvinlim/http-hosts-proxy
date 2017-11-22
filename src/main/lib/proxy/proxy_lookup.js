@@ -11,18 +11,18 @@ import { lookupGlob } from './proxy_globs';
  */
 export const lookup = hostname => {
   // Helper method to keep track of visited entries.
-  const lookupHelper = (hostname, visited) => {
+  const lookupHelper = (currentHostname, visited) => {
     // Handle null hostnames.
-    if (!hostname || !hostname.length) {
+    if (!currentHostname || !currentHostname.length) {
       return null;
     }
 
     // Look up hostname in the hostname mappings.
-    let address = getMapping(hostname);
+    let address = getMapping(currentHostname);
 
     // If there is no exact match, attempt to match a glob.
     if (!address) {
-      const mapping = lookupGlob(hostname);
+      const mapping = lookupGlob(currentHostname);
 
       if (mapping) {
         address = mapping.address;
@@ -31,13 +31,13 @@ export const lookup = hostname => {
 
     // If there is no mapping, the hostname resolves to itself.
     if (!address) {
-      return hostname;
+      return currentHostname;
     }
 
     // Base case: We have visited the next node before.
     // This node should be the result.
     if (visited.indexOf(address) >= 0) {
-      return hostname;
+      return currentHostname;
     }
 
     // Add the resolved address into the visited array.

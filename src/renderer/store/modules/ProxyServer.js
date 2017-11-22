@@ -1,6 +1,6 @@
 import { ipcGet, ipcReceive } from '../../helpers/ipc';
 
-const state = {
+const initialState = {
   isRunning: false,
   address: '',
 };
@@ -41,7 +41,7 @@ const actions = {
 };
 
 export default {
-  state,
+  state: initialState,
   mutations,
   actions,
 };

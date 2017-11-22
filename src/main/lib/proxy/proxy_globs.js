@@ -80,9 +80,6 @@ export const lookupGlob = hostname => {
     return false;
   }
 
-  // Start from the root of the tree.
-  let currentNode = globDomainTree.root;
-
   // Split the hostname by '.' separator.
   // We will iterate this as a stack from right to left.
   const hostnameParts = hostname.split('.');
@@ -91,33 +88,33 @@ export const lookupGlob = hostname => {
    * Traverses the domain name tree to recursively find the furthest leaf node (i.e. nodes that
    * end with '*') that can be traversed to which follows a path as given by hostnameParts.
    * @param {DomainName} currentNode
-   * @param {string[]} hostnameParts
+   * @param {string[]} stack
    */
-  const traverseTree = (currentNode, hostnameParts) => {
+  const traverseTree = (currentNode, stack) => {
     // Handle base case: Failed query.
-    if (currentNode.children.length <= 0 || hostnameParts.length <= 0) {
+    if (currentNode.children.length <= 0 || stack.length <= 0) {
       return false;
     }
 
     // Peek the top of the stack.
-    let currentQuery = hostnameParts[hostnameParts.length - 1];
+    let currentQuery = stack[stack.length - 1];
 
     // Find matching nodes, if available.
     const queryNode = currentNode.getNode(currentQuery);
     const leafNode = currentNode.getNode('*');
 
     // Create a new array with the last element popped off.
-    const popped = hostnameParts.slice(0, hostnameParts.length - 1);
+    const poppedStack = stack.slice(0, stack.length - 1);
 
     // Handle special case of nested globs: Need to branch here.
     // Try to resolve the longer chain; otherwise we fallback to the shorter one.
     if (queryNode && leafNode) {
-      return traverseTree(queryNode, popped) || leafNode;
+      return traverseTree(queryNode, poppedStack) || leafNode;
     }
 
     // Otherwise, if we have a query node, we traverse down to the queryNode.
     if (queryNode) {
-      return traverseTree(queryNode, popped);
+      return traverseTree(queryNode, poppedStack);
     }
 
     // Otherwise, we check if we have reached leaf node.
@@ -128,8 +125,8 @@ export const lookupGlob = hostname => {
     return false;
   };
 
-  // Run the tree traversal.
-  const furthestLeafNode = traverseTree(currentNode, hostnameParts);
+  // Run the tree traversal from the root of the tree.
+  const furthestLeafNode = traverseTree(globDomainTree.root, hostnameParts);
 
   // Handle failed queries.
   if (!furthestLeafNode) {

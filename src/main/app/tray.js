@@ -33,10 +33,10 @@ const contextMenuItems = [
 const iconsPath = 'static/icons';
 
 // Get tray image paths depending on platform.
-const getTrayImage = platform => {
-  if (platform === 'darwin') {
+const getTrayImage = os => {
+  if (os === 'darwin') {
     return `${iconsPath}/macos/iconTemplate.png`;
-  } else if (platform === 'win32') {
+  } else if (os === 'win32') {
     return `${iconsPath}/win/tray.icns`;
   }
 };

@@ -53,7 +53,7 @@ export const ipcAction = event => {
 export const ipcPost = (event, data) => {
   ipcRenderer.send(event, data);
   return new Promise(resolve =>
-    ipcRenderer.once(`${event}.data`, (event, data) => resolve(data))
+    ipcRenderer.once(`${event}.data`, (event, result) => resolve(result))
   );
 };
 

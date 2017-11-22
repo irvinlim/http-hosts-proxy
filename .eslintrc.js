@@ -24,6 +24,12 @@ module.exports = {
     semi: ['error', 'always'],
     'no-console': 'off',
 
+    // don't allow redeclaration of vars in outer scope
+    'no-shadow': [
+      'error',
+      { allow: ['resolve', 'reject', 'done', 'cb', 'event', 'err'] },
+    ],
+
     'no-unused-vars': ['error', { varsIgnorePattern: '^_.*' }],
 
     // allow paren-less arrow functions
