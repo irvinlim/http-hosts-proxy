@@ -20,13 +20,8 @@ export default {
     async loadProxyAddress() {
       this.proxyAddress = await ipcGet(this, 'proxy.server.getAddress');
       ipcReceive(this, 'proxy.server.getAddress', data => {
-        const { address, family, port } = data;
-
-        if (family.toLowerCase() === 'ipv6') {
-          this.proxyAddressString = `[${address}]:${port}`;
-        } else {
-          this.proxyAddressString = `${address}:${port}`;
-        }
+        const { port } = data;
+        this.proxyAddressString = `localhost:${port}`;
       });
     },
     async loadProxyStatus() {

@@ -107,7 +107,7 @@ export const start = port => {
   }
 
   // Start listening on port.
-  server.listen(port);
+  server.listen(port, 'localhost');
 
   // Wait on either listening or error events to resolve the Promise.
   return new Promise((resolve, reject) => {
