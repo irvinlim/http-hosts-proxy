@@ -107,7 +107,7 @@ proxy.on('error', function(err, req, res) {
 
   // Send some information about the error.
   const error = {
-    error: 'dns_switcher_proxy_error',
+    error: 'http_hosts_proxy_error',
     code: err.code,
     message: err.message,
   };
@@ -135,7 +135,7 @@ export const start = port => {
   // Wait on either listening or error events to resolve the Promise.
   return new Promise((resolve, reject) => {
     server.on('listening', () => {
-      log.info(`Server already started on localhost:${port}.`);
+      log.info(`Server started on localhost:${port}.`);
       resolve();
     });
 

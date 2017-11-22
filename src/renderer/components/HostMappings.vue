@@ -12,7 +12,7 @@
           <p>Instructions</p>
         </div>
         <div class="message-body">
-          <p class="is-size-7">Enter the hostnames that you wish to resolve using DNS Switcher Proxy. The address can be either an IP address or domain name.</p>
+          <p class="is-size-7">Enter the hostnames that you wish to resolve using {{ appName }}. The address can be either an IP address or domain name.</p>
           <br>
           <p class="is-size-7"><strong>Wildcard Hostnames</strong></p>
           <p class="is-size-7">You may use <code>*</code> as a wildcard to resolve a range of hostnames, e.g. <code>*.mywebsite.local</code>. Absolute hostname mappings are matched first, followed by wildcard hostnames.</p>
@@ -87,10 +87,13 @@
 </template>
 
 <script>
+import { remote } from 'electron';
 import { ipcGet, ipcPut } from '../helpers/ipc';
 
 export default {
   data: () => ({
+    appName: remote.app.getName(),
+
     // Local state.
     isSaving: false,
 

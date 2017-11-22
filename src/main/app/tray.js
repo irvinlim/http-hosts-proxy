@@ -10,12 +10,12 @@ import { platform } from 'os';
 let tray = null;
 
 // Tooltip which will be shown on hover.
-const tooltip = 'DNS Switcher Proxy';
+const tooltip = app.getName();
 
 // Context menu items.
 const contextMenuItems = [
   {
-    label: 'Open DNS Switcher Proxy',
+    label: `Open ${app.getName()}`,
     click() {
       window.show();
     },

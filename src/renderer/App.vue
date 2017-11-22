@@ -10,7 +10,6 @@ import { ipcAction } from './helpers/ipc';
 import { mapActions } from 'vuex';
 
 export default {
-  name: 'dns-switcher-proxy',
   async mounted() {
     // Starts the proxy server.
     await ipcAction('proxy.server.start');

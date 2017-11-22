@@ -1,12 +1,16 @@
 {
-  "name": "dns-switcher-proxy",
-  "productName": "DNS Switcher Proxy",
-  "description": "Allows you to dynamically resolve DNS to custom addresses through a forward proxy, just like editing /etc/hosts.",
+  "name": "http-hosts-proxy",
+  "productName": "HTTP Hosts Proxy",
+  "description": "HTTP proxy server on Electron for dynamically resolving hostnames.",
   "version": "0.1.0",
   "private": true,
   "author": "Irvin Lim <irvinlimweiquan@gmail.com>",
   "copyright": "© 2017, Irvin Lim",
   "homepage": "https://irvinlim.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/irvinlim/http-hosts-proxy"
+  },
   "main": "./dist/electron/main.js",
   "scripts": {
     "build": "node .electron-vue/build.js && electron-builder",
@@ -14,8 +18,8 @@
     "build:clean": "cross-env BUILD_TARGET=clean node .electron-vue/build.js",
     "build:web": "cross-env BUILD_TARGET=web node .electron-vue/build.js",
     "dev": "node .electron-vue/dev-runner.js",
-    "lint": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter src",
-    "lint:fix": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter --fix src",
+    "lint": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter src test",
+    "lint:fix": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter --fix src test",
     "pack": "npm run pack:main && npm run pack:renderer",
     "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.main.config.js",
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
@@ -23,8 +27,8 @@
     "test": "cross-env NODE_ENV=test electron-mocha --reporter=nyan --require babel-register test/**/*.js"
   },
   "build": {
-    "productName": "electron-vue",
-    "appId": "org.simulatedgreg.electron-vue",
+    "productName": "http-hosts-proxy",
+    "appId": "com.irvinlim.http-hosts-proxy",
     "directories": {
       "output": "build"
     },

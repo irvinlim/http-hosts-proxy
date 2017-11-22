@@ -3,7 +3,7 @@
     <aside id="menu">
       <div class="menu-body">
         <p class="menu-label">
-          DNS Switcher Proxy
+          {{ appName }}
         </p>
         <ul class="menu-list is-dark">
           <li v-for="item in menuItems" :key="item.link">
@@ -20,7 +20,7 @@
           Development Mode
         </p>
         <p class="footer-text">
-          Report any issues on <a href="https://github.com/irvinlim/dns-switcher-proxy">GitHub</a>
+          Report any issues on <a href="https://github.com/irvinlim/http-hosts-proxy">GitHub</a>
         </p>
       </div>
     </aside>
@@ -44,6 +44,7 @@ export default {
       { link: 'host-mappings', label: 'Host Mappings' },
       { link: 'settings', label: 'Settings' },
     ],
+    appName: remote.app.getName(),
     versionNumber: remote.app.getVersion(),
     isProduction: remote.getGlobal('process').env.NODE_ENV === 'production',
   }),
