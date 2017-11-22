@@ -24,11 +24,12 @@ server.on('request', function(req, res) {
   // Recursively lookup address that hostname should resolve to.
   const resolved = lookup(hostname);
 
-  // Logging
+  // Get the new URL that we want to proxy to.
+  const newUrl = `${protocol}//${resolved}:${port}${pathname}${query}`;
+
+  // Do some logging.
   if (hostname !== resolved) {
-    const oldUrl = req.url;
-    const newUrl = `${protocol}//${resolved}:${port}${pathname}${query}`;
-    log.info(`Resolved ${oldUrl} to ${newUrl}.`);
+    log.info(`Resolved ${req.url} to ${newUrl}.`);
   }
 
   // Proxy HTTP(S) requests.
@@ -52,11 +53,12 @@ server.on('connect', function(req, socket) {
   // Recursively lookup address that hostname should resolve to.
   const resolved = lookup(hostname);
 
-  // Logging
+  // Get the new address that we want to make a CONNECT tunnel to.
+  const newUrl = `${resolved}:${port}`;
+
+  // Do some logging.
   if (hostname !== resolved) {
-    const oldUrl = req.url;
-    const newUrl = `${resolved}:${port}`;
-    log.info(`Resolved ${oldUrl} to ${newUrl}.`);
+    log.info(`Resolved ${req.url} to ${newUrl}.`);
   }
 
   const conn = net.connect(port, resolved, function() {
@@ -74,6 +76,14 @@ server.on('connect', function(req, socket) {
     // Create a tunnel between the two hosts.
     socket.pipe(conn);
     conn.pipe(socket);
+  });
+
+  // Handle tunnel errors gracefully.
+  conn.on('error', function(err) {
+    const message =
+      `Could not establish HTTPS tunnel for ${req.url} to ${newUrl}: ` +
+      err.code;
+    log.error(message);
   });
 });
 
