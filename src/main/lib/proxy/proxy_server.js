@@ -125,7 +125,7 @@ export const getAddress = () => {
 
 export const start = port => {
   if (isListening()) {
-    log.info(`Server already started on localhost:${server.address()}.`);
+    log.info(`Server already started on localhost:${server.address().port}.`);
     return Promise.resolve();
   }
 
