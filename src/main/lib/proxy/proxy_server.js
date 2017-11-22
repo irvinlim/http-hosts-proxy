@@ -32,6 +32,8 @@ server.on('request', function(req, res) {
     log.info(`Resolved ${req.url} to ${newUrl}.`);
   }
 
+  log.debug(`Making HTTP request to ${newUrl}.`);
+
   // Proxy HTTP(S) requests.
   proxy.web(req, res, {
     // Set up proxy to remote host.
@@ -61,7 +63,12 @@ server.on('connect', function(req, socket) {
     log.info(`Resolved ${req.url} to ${newUrl}.`);
   }
 
+  log.debug(`Initiating CONNECT tunnel to ${newUrl}.`);
+
   const conn = net.connect(port, resolved, function() {
+    // Info logging
+    log.debug(`Successfully established CONNECT tunnel to ${newUrl}.`);
+
     // Respond to client that connection was made.
     const responseLines = [
       'HTTP/1.1 200 Connection Established',
@@ -80,6 +87,7 @@ server.on('connect', function(req, socket) {
 
   // Handle tunnel errors gracefully.
   conn.on('error', function(err) {
+    // Log error message.
     const message =
       `Could not establish HTTPS tunnel for ${req.url} to ${newUrl}: ` +
       err.code;
@@ -90,6 +98,10 @@ server.on('connect', function(req, socket) {
 // Handle all proxy errors like ECONNRESET, ENOTFOUND, etc.
 // Returns a RESTful error message, which can be consumed by Chrome extensions, etc.
 proxy.on('error', function(err, req, res) {
+  // Log error message.
+  const message = `Error while requesting "${req.url}": ` + err.code;
+  log.error(message);
+
   // Send a 500 status code.
   res.writeHead(500, { 'Content-Type': 'application/json' });
 
@@ -113,6 +125,7 @@ export const getAddress = () => {
 
 export const start = port => {
   if (isListening()) {
+    log.info(`Server already started on localhost:${server.address()}.`);
     return Promise.resolve();
   }
 
@@ -121,17 +134,30 @@ export const start = port => {
 
   // Wait on either listening or error events to resolve the Promise.
   return new Promise((resolve, reject) => {
-    server.on('listening', resolve);
-    server.on('error', reject);
+    server.on('listening', () => {
+      log.info(`Server already started on localhost:${port}.`);
+      resolve();
+    });
+
+    server.on('error', () => {
+      log.error(`Could not start server on localhost:${port}.`);
+      reject();
+    });
   });
 };
 
 export const stop = () => {
   if (!isListening()) {
+    log.info('Could not stop server, server is not running.');
     return Promise.resolve();
   }
 
-  return new Promise(resolve => server.close(resolve));
+  return new Promise(resolve =>
+    server.close(() => {
+      log.info('Server stopped.');
+      resolve();
+    })
+  );
 };
 
 export const restart = async port => {
