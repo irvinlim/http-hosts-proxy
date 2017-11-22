@@ -1,17 +1,35 @@
 <template>
   <div class="server-status-tag">
-    <p>
-      Server status:
-      <span :class="['tag', { 'is-primary': isRunning, 'is-danger': !isRunning }]">
-        {{ isRunning ? `Running` : 'Stopped' }}
-      </span>
-    </p>
-    <p v-if="isRunning">
-      Listening on:
-      <span class="tag">
-        {{ address }}
-      </span>
-    </p>
+
+    <div class="field is-horizontal is-small-field">
+      <div class="field-label is-small is-normal">
+        <label for="listeningPort" class="label">Server status:</label>
+      </div>
+
+      <div class="field-body">
+        <div class="field">
+          <p class="control">
+            <span :class="['tag', { 'is-primary': isRunning, 'is-danger': !isRunning }]">
+              {{ isRunning ? `Running` : 'Stopped' }}
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="field is-horizontal is-small-field" v-if="isRunning">
+      <div class="field-label is-small is-normal">
+        <label for="listeningPort" class="label">Listening on:</label>
+      </div>
+
+      <div class="field-body">
+        <div class="field">
+          <p class="control">
+            <span class="tag">{{ address }}</span>
+          </p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -27,9 +45,20 @@ export default {
 </script>
 
 <style lang="scss">
-.server-status-tag {
-  p {
-    margin-bottom: 5px;
+.is-small-field {
+  margin-bottom: 0.75rem;
+
+  .field-label {
+    margin-right: 0;
+
+    label {
+      font-weight: normal;
+      text-align: left;
+    }
+  }
+
+  .field-body {
+    flex-grow: 1;
   }
 }
 </style>

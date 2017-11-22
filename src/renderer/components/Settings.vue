@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container is-fluid">
     <header>
       <h1 class="title is-3">Settings</h1>
     </header>
@@ -7,29 +7,32 @@
     <section class="main">
       <div class="box">
         <div class="columns">
-          <div class="column">
+          <div class="column is-6 is-4-widescreen is-3-fullhd">
             <p class="title is-5">Proxy Server</p>
 
-            <p class="subtitle">
-              <server-status-tag></server-status-tag>
-            </p>
+            <server-status-tag></server-status-tag>
 
-            <div class="columns is-gapless">
-              <div class="column is-one-quarter">
-                <p class="input-label is-size-7">Listening Port</p>
+            <div class="field is-horizontal is-small-field">
+              <div class="field-label is-small is-normal">
+                <label for="listeningPort" class="label">Change port:</label>
               </div>
-              <div class="column is-one-quarter">
-                <input
-                  class="input is-small"
-                  type="text"
-                  name="listeningPort"
-                  placeholder="5060"
-                  v-model="settings.listeningPort"
-                  >
+
+              <div class="field-body">
+                <div class="field">
+                  <p class="control">
+                    <input
+                      class="input is-small"
+                      type="text"
+                      name="listeningPort"
+                      placeholder="5060"
+                      v-model="settings.listeningPort"
+                      >
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-          <div class="column is-one-fifth">
+          <div class="column is-3 is-offset-3 is-2-widescreen is-offset-6-widescreen is-2-fullhd is-offset-7-fullhd">
             <div class="vert-button-group">
               <button class="button is-primary is-outlined" v-if="!isProxyRunning" @click="handleClickStart()" :disabled="isSaving">Start</button>
               <button class="button is-danger is-outlined" v-if="isProxyRunning" @click="handleClickStop()" ::disabled="isSaving">Stop</button>

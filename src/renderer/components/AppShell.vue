@@ -12,7 +12,7 @@
         </ul>
       </div>
       <div class="menu-footer">
-        <server-status-tag class="footer-text" style="margin-bottom: 20px"></server-status-tag>
+        <server-status-tag class="footer-text" style="margin-bottom: 30px"></server-status-tag>
         <p class="footer-text" v-if="isProduction">
           Version {{ versionNumber }} by <a href="https://irvinlim.com/">Irvin Lim</a>
         </p>
@@ -77,8 +77,12 @@ aside#menu {
   justify-content: space-between;
   flex-shrink: 0;
   .footer-text {
-    font-size: small;
-    color: $grey;
+    &,
+    label {
+      font-size: small;
+      color: $grey;
+    }
+
     a:hover {
       color: $grey-light;
     }

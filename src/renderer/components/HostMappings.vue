@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container is-fluid">
     <header>
       <h1 class="title is-3">Host Mappings</h1>
     </header>
