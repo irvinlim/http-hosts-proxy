@@ -88,5 +88,30 @@ describe('lib.proxy.lookup', function() {
       expect(lookup('test2.example.com')).to.be.equal('1.2.3.4');
       expect(lookup('test3.test.example.com')).to.be.equal('1.2.3.4');
     });
+
+    it('should not enter an infinite loop when doing recursively resolving hostnames', function() {
+      putMappings({ 'test.example.com': 'test.example.com' });
+      expect(lookup('test.example.com')).to.be.equal('test.example.com');
+    });
+
+    it('should return the last visited node when entering recursively entering a cycle', function() {
+      // Cycle of two nodes
+      putMappings({
+        'test1.example.com': 'test2.example.com',
+        'test2.example.com': 'test1.example.com',
+      });
+      expect(lookup('test1.example.com')).to.be.equal('test2.example.com');
+      expect(lookup('test2.example.com')).to.be.equal('test1.example.com');
+
+      // Cycle of three nodes
+      putMappings({
+        'test1.example.com': 'test2.example.com',
+        'test2.example.com': 'test3.example.com',
+        'test3.example.com': 'test1.example.com',
+      });
+      expect(lookup('test1.example.com')).to.be.equal('test3.example.com');
+      expect(lookup('test2.example.com')).to.be.equal('test1.example.com');
+      expect(lookup('test3.example.com')).to.be.equal('test2.example.com');
+    });
   });
 });
