@@ -20,16 +20,16 @@ describe('lib.proxy.globs', function() {
 
     it('should return false when the tree only has non-globs', function() {
       populate([
-        { hostname: 'test.example.com', address: '1.2.3.4' },
-        { hostname: 'test2.hello.net', address: '8.7.6.5' },
+        { hostname: 'test.example.com', address: '1.2.3.4', active: true },
+        { hostname: 'test2.hello.net', address: '8.7.6.5', active: true },
       ]);
       expect(lookupGlob('test.example.com')).to.be.false;
     });
 
     it('should return the correct mapping if it is contained in a single glob', function() {
       populate([
-        { hostname: '*.example.com', address: '1.2.3.4' },
-        { hostname: 'test2.example.com', address: '8.7.6.5' },
+        { hostname: '*.example.com', address: '1.2.3.4', active: true },
+        { hostname: 'test2.example.com', address: '8.7.6.5', active: true },
       ]);
       expect(lookupGlob('test.example.com'))
         .to.have.property('address')
@@ -38,24 +38,24 @@ describe('lib.proxy.globs', function() {
 
     it('should return false if it is not contained in any glob', function() {
       populate([
-        { hostname: '*.example.com', address: '1.2.3.4' },
-        { hostname: '*.mysite.net', address: '8.7.6.5' },
+        { hostname: '*.example.com', address: '1.2.3.4', active: true },
+        { hostname: '*.mysite.net', address: '8.7.6.5', active: true },
       ]);
       expect(lookupGlob('neopets.com')).to.be.false;
     });
 
     it('should return false if it exactly matches any glob', function() {
       populate([
-        { hostname: '*.example.com', address: '1.2.3.4' },
-        { hostname: 'test2.example.com', address: '8.7.6.5' },
+        { hostname: '*.example.com', address: '1.2.3.4', active: true },
+        { hostname: 'test2.example.com', address: '8.7.6.5', active: true },
       ]);
       expect(lookupGlob('example.com')).to.be.false;
     });
 
     it('should return the correct mapping if it is contained in the most specific glob', function() {
       populate([
-        { hostname: '*.test.example.com', address: '1.2.3.4' },
-        { hostname: '*.example.com', address: '8.7.6.5' },
+        { hostname: '*.test.example.com', address: '1.2.3.4', active: true },
+        { hostname: '*.example.com', address: '8.7.6.5', active: true },
       ]);
       expect(lookupGlob('hello.test.example.com'))
         .to.have.property('address')
@@ -64,8 +64,8 @@ describe('lib.proxy.globs', function() {
 
     it('should return the correct mapping if the matched glob is contained in another glob', function() {
       populate([
-        { hostname: '*.test.example.com', address: '1.2.3.4' },
-        { hostname: '*.example.com', address: '8.7.6.5' },
+        { hostname: '*.test.example.com', address: '1.2.3.4', active: true },
+        { hostname: '*.example.com', address: '8.7.6.5', active: true },
       ]);
       expect(lookupGlob('hello.example.com'))
         .to.have.property('address')
@@ -74,8 +74,8 @@ describe('lib.proxy.globs', function() {
 
     it('should return the correct mapping if there are nested globs', function() {
       populate([
-        { hostname: '*.test.example.com', address: '1.2.3.4' },
-        { hostname: '*.example.com', address: '8.7.6.5' },
+        { hostname: '*.test.example.com', address: '1.2.3.4', active: true },
+        { hostname: '*.example.com', address: '8.7.6.5', active: true },
       ]);
       expect(lookupGlob('test.example.com'))
         .to.have.property('address')
@@ -87,8 +87,9 @@ describe('lib.proxy.globs', function() {
         {
           hostname: '*.very.deeply.nested.test.example.com',
           address: '1.2.3.4',
+          active: true,
         },
-        { hostname: '*.example.com', address: '8.7.6.5' },
+        { hostname: '*.example.com', address: '8.7.6.5', active: true },
       ]);
       expect(lookupGlob('test.example.com'))
         .to.have.property('address')
