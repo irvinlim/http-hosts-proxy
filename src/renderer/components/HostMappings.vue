@@ -119,7 +119,7 @@ export default {
 
       // Convert dictionary into an array of objects.
       for (let hostname in mappings) {
-        this.mappings.push({ hostname, address: mappings[hostname] });
+        this.mappings.push({ hostname, ...mappings[hostname] });
       }
     },
 
@@ -137,6 +137,8 @@ export default {
       this.mappings.push({
         hostname: '',
         address: '',
+        hostHeader: '',
+        active: true,
       });
     },
 
@@ -172,14 +174,14 @@ export default {
 
       // Iterate through all mapping objects.
       for (let mapping of this.mappings) {
-        const { hostname, address } = mapping;
+        const { hostname, ...data } = mapping;
 
         // Skip any entries which have missing values.
-        if (!hostname || !address) {
+        if (!hostname || !data.address) {
           continue;
         }
 
-        newMappings[hostname] = address;
+        newMappings[hostname] = data;
       }
 
       // Push via IPC.

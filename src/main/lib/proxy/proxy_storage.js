@@ -39,13 +39,8 @@ export const getMappings = () => {
  * @param {string} hostname
  */
 export const getMapping = hostname => {
-  const address = loadedMappings[hostname];
-
-  if (!address || !address.length) {
-    return null;
-  }
-
-  return address;
+  const data = loadedMappings[hostname];
+  return data;
 };
 
 /**
@@ -64,14 +59,14 @@ export const putMappings = mappings => {
  * Adds or updates the hostname mapping for a given hostname to a given address.
  * Also saves the mapping to local storage.
  * @param {string} hostname
- * @param {string} address
+ * @param {Object} data
  */
-export const upsertMapping = (hostname, address) => {
+export const upsertMapping = (hostname, data) => {
   // Load mappings if necessary first.
   loadFromStorage();
 
   // Updates the local dictionary.
-  loadedMappings[hostname] = address;
+  loadedMappings[hostname] = data;
 
   // Persist the change to disk.
   saveIntoStorage();
@@ -121,7 +116,7 @@ const convertDictToArray = mappingsDict => {
   for (let hostname in mappingsDict) {
     array.push({
       hostname,
-      address: mappingsDict[hostname],
+      ...mappingsDict[hostname],
     });
   }
 
