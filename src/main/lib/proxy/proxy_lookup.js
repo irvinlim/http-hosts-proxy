@@ -17,16 +17,19 @@ export const lookup = hostname => {
       return null;
     }
 
-    // Look up hostname in the hostname mappings.
-    let address = getMapping(currentHostname);
+    // Look up hostname to get the next address that it resolves to.
+    const mapping = getMapping(currentHostname);
+    let address;
 
-    // If there is no exact match, attempt to match a glob.
-    if (!address) {
-      const mapping = lookupGlob(currentHostname);
+    // Extract out the address field if there is an exact match.
+    if (mapping) {
+      address = mapping.address;
+    }
 
-      if (mapping) {
-        address = mapping.address;
-      }
+    // Otherwise, attempt to match a glob.
+    const matchedGlob = lookupGlob(currentHostname);
+    if (!address && matchedGlob) {
+      address = matchedGlob.address;
     }
 
     // If there is no mapping, the hostname resolves to itself.

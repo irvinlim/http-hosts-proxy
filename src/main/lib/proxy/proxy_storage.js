@@ -40,6 +40,12 @@ export const getMappings = () => {
  */
 export const getMapping = hostname => {
   const data = loadedMappings[hostname];
+
+  // Don't return if it is inactive.
+  if (!data || !data.active) {
+    return null;
+  }
+
   return data;
 };
 
