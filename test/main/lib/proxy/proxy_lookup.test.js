@@ -7,10 +7,10 @@ import proxy from '../../../../src/main/lib/proxy';
 
 const { getMappings, putMappings } = proxy.storage;
 const { countLeaves } = proxy.globs;
-const { lookup } = proxy.lookup;
+const { lookupAddress } = proxy.lookup;
 
 describe('lib.proxy.lookup', function() {
-  describe('#lookup', function() {
+  describe('#lookupAddress', function() {
     beforeEach(function() {
       putMappings({});
       expect(countLeaves()).to.be.eq(0);
@@ -18,7 +18,7 @@ describe('lib.proxy.lookup', function() {
     });
 
     it('should return the same hostname when there are no mappings', function() {
-      expect(lookup('test.example.com')).to.be.equal('test.example.com');
+      expect(lookupAddress('test.example.com')).to.be.equal('test.example.com');
     });
 
     it('should return the same hostname when no mappings are matching', function() {
@@ -26,7 +26,7 @@ describe('lib.proxy.lookup', function() {
         'test.example.com': { address: '1.2.3.4', active: true },
         'hello.mysite.net': { address: '5.6.7.8', active: true },
       });
-      expect(lookup('mycompany.xyz')).to.be.equal('mycompany.xyz');
+      expect(lookupAddress('mycompany.xyz')).to.be.equal('mycompany.xyz');
     });
 
     it('should return a resolved address when a hostname exactly matches', function() {
@@ -34,8 +34,8 @@ describe('lib.proxy.lookup', function() {
         'test.example.com': { address: '1.2.3.4', active: true },
         'hello.mysite.net': { address: '5.6.7.8', active: true },
       });
-      expect(lookup('test.example.com')).to.be.equal('1.2.3.4');
-      expect(lookup('hello.mysite.net')).to.be.equal('5.6.7.8');
+      expect(lookupAddress('test.example.com')).to.be.equal('1.2.3.4');
+      expect(lookupAddress('hello.mysite.net')).to.be.equal('5.6.7.8');
     });
 
     it('should recursively resolve addresses stored in the mappings', function() {
@@ -43,8 +43,8 @@ describe('lib.proxy.lookup', function() {
         'test.example.com': { address: 'hello.mysite.net', active: true },
         'hello.mysite.net': { address: '5.6.7.8', active: true },
       });
-      expect(lookup('hello.mysite.net')).to.be.equal('5.6.7.8');
-      expect(lookup('test.example.com')).to.be.equal('5.6.7.8');
+      expect(lookupAddress('hello.mysite.net')).to.be.equal('5.6.7.8');
+      expect(lookupAddress('test.example.com')).to.be.equal('5.6.7.8');
     });
 
     it('should resolve glob hostnames correctly', function() {
@@ -52,10 +52,12 @@ describe('lib.proxy.lookup', function() {
         '*.example.com': { address: '1.2.3.4', active: true },
         'hello.mysite.net': { address: '5.6.7.8', active: true },
       });
-      expect(lookup('example.com')).to.be.equal('example.com');
-      expect(lookup('test.example.com')).to.be.equal('1.2.3.4');
-      expect(lookup('another.test.example.com')).to.be.equal('1.2.3.4');
-      expect(lookup('yet.another.test.example.com')).to.be.equal('1.2.3.4');
+      expect(lookupAddress('example.com')).to.be.equal('example.com');
+      expect(lookupAddress('test.example.com')).to.be.equal('1.2.3.4');
+      expect(lookupAddress('another.test.example.com')).to.be.equal('1.2.3.4');
+      expect(lookupAddress('yet.another.test.example.com')).to.be.equal(
+        '1.2.3.4'
+      );
     });
 
     it('should resolve nested glob hostnames correctly', function() {
@@ -63,10 +65,12 @@ describe('lib.proxy.lookup', function() {
         '*.test.example.com': { address: '1.2.3.4', active: true },
         '*.example.com': { address: '5.6.7.8', active: true },
       });
-      expect(lookup('example.com')).to.be.equal('example.com');
-      expect(lookup('test.example.com')).to.be.equal('5.6.7.8');
-      expect(lookup('another.test.example.com')).to.be.equal('1.2.3.4');
-      expect(lookup('yet.another.test.example.com')).to.be.equal('1.2.3.4');
+      expect(lookupAddress('example.com')).to.be.equal('example.com');
+      expect(lookupAddress('test.example.com')).to.be.equal('5.6.7.8');
+      expect(lookupAddress('another.test.example.com')).to.be.equal('1.2.3.4');
+      expect(lookupAddress('yet.another.test.example.com')).to.be.equal(
+        '1.2.3.4'
+      );
     });
 
     it('should resolve absolute hostnames before glob hostnames', function() {
@@ -74,8 +78,8 @@ describe('lib.proxy.lookup', function() {
         '*.example.com': { address: '5.6.7.8', active: true },
         'test.example.com': { address: '1.2.3.4', active: true },
       });
-      expect(lookup('test.example.com')).to.be.equal('1.2.3.4');
-      expect(lookup('test2.example.com')).to.be.equal('5.6.7.8');
+      expect(lookupAddress('test.example.com')).to.be.equal('1.2.3.4');
+      expect(lookupAddress('test2.example.com')).to.be.equal('5.6.7.8');
     });
 
     it('should recursively resolve glob hostnames into absolute hostnames', function() {
@@ -83,17 +87,17 @@ describe('lib.proxy.lookup', function() {
         '*.example.com': { address: 'test.example.com', active: true },
         'test.example.com': { address: '1.2.3.4', active: true },
       });
-      expect(lookup('example.com')).to.be.equal('example.com');
-      expect(lookup('test.example.com')).to.be.equal('1.2.3.4');
-      expect(lookup('test2.example.com')).to.be.equal('1.2.3.4');
-      expect(lookup('test3.test.example.com')).to.be.equal('1.2.3.4');
+      expect(lookupAddress('example.com')).to.be.equal('example.com');
+      expect(lookupAddress('test.example.com')).to.be.equal('1.2.3.4');
+      expect(lookupAddress('test2.example.com')).to.be.equal('1.2.3.4');
+      expect(lookupAddress('test3.test.example.com')).to.be.equal('1.2.3.4');
     });
 
     it('should not enter an infinite loop when doing recursively resolving hostnames', function() {
       putMappings({
         'test.example.com': { address: 'test.example.com', active: true },
       });
-      expect(lookup('test.example.com')).to.be.equal('test.example.com');
+      expect(lookupAddress('test.example.com')).to.be.equal('test.example.com');
     });
 
     it('should return the last visited node when entering recursively entering a cycle', function() {
@@ -102,8 +106,12 @@ describe('lib.proxy.lookup', function() {
         'test1.example.com': { address: 'test2.example.com', active: true },
         'test2.example.com': { address: 'test1.example.com', active: true },
       });
-      expect(lookup('test1.example.com')).to.be.equal('test2.example.com');
-      expect(lookup('test2.example.com')).to.be.equal('test1.example.com');
+      expect(lookupAddress('test1.example.com')).to.be.equal(
+        'test2.example.com'
+      );
+      expect(lookupAddress('test2.example.com')).to.be.equal(
+        'test1.example.com'
+      );
 
       // Cycle of three nodes
       putMappings({
@@ -111,9 +119,15 @@ describe('lib.proxy.lookup', function() {
         'test2.example.com': { address: 'test3.example.com', active: true },
         'test3.example.com': { address: 'test1.example.com', active: true },
       });
-      expect(lookup('test1.example.com')).to.be.equal('test3.example.com');
-      expect(lookup('test2.example.com')).to.be.equal('test1.example.com');
-      expect(lookup('test3.example.com')).to.be.equal('test2.example.com');
+      expect(lookupAddress('test1.example.com')).to.be.equal(
+        'test3.example.com'
+      );
+      expect(lookupAddress('test2.example.com')).to.be.equal(
+        'test1.example.com'
+      );
+      expect(lookupAddress('test3.example.com')).to.be.equal(
+        'test2.example.com'
+      );
     });
   });
 });

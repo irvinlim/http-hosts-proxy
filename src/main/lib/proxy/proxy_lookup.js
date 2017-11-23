@@ -1,4 +1,5 @@
-import { getAddress } from './proxy_storage';
+import { getAddress, getMapping } from './proxy_storage';
+
 import { lookupGlob } from './proxy_globs';
 
 /**
@@ -9,7 +10,7 @@ import { lookupGlob } from './proxy_globs';
  * @return {string} The IP address or domain name that the given hostname should resolve to. If a
  *                  FQDN is returned, then the upstream DNS server will resolve it instead.
  */
-export const lookup = hostname => {
+export const lookupAddress = hostname => {
   // Helper method to keep track of visited entries.
   const lookupHelper = (currentHostname, visited) => {
     // Handle null hostnames.
@@ -45,4 +46,28 @@ export const lookup = hostname => {
   };
 
   return lookupHelper(hostname, [hostname]);
+};
+
+/**
+ * Looks up the Host header within the hostname mappings.
+ * @param {string} hostname Hostname to look up.
+ * @return {string} Host header for a hostname that exists in the mappings;
+ * it can either be an exact match or matched by a glob.
+ */
+export const lookupHostHeader = hostname => {
+  // If there is an exact match, we will use that hostname's data.
+  const mapping = getMapping(hostname);
+
+  if (mapping) {
+    return mapping.hostHeader;
+  }
+
+  // Otherwise, attempt to match a glob.
+  const globMapping = lookupGlob(hostname);
+
+  if (globMapping) {
+    return globMapping.hostHeader;
+  }
+
+  return null;
 };
