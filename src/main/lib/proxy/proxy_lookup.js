@@ -1,4 +1,4 @@
-import { getMapping } from './proxy_storage';
+import { getAddress } from './proxy_storage';
 import { lookupGlob } from './proxy_globs';
 
 /**
@@ -18,35 +18,29 @@ export const lookup = hostname => {
     }
 
     // Look up hostname to get the next address that it resolves to.
-    const mapping = getMapping(currentHostname);
-    let address;
+    let address = getAddress(currentHostname);
 
-    // Extract out the address field if there is an exact match.
-    if (mapping) {
-      address = mapping.address;
+    // If there is no exact match, attempt to match a glob.
+    if (!address) {
+      const matchedGlob = lookupGlob(currentHostname);
+
+      if (matchedGlob) {
+        address = matchedGlob.address;
+      }
     }
 
-    // Otherwise, attempt to match a glob.
-    const matchedGlob = lookupGlob(currentHostname);
-    if (!address && matchedGlob) {
-      address = matchedGlob.address;
-    }
-
-    // If there is no mapping, the hostname resolves to itself.
+    // Base case: If we cannot resolve the hostname, it resolves to itself.
     if (!address) {
       return currentHostname;
     }
 
-    // Base case: We have visited the next node before.
-    // This node should be the result.
+    // Base case: We have visited the next node before, so we return the current hostname.
     if (visited.indexOf(address) >= 0) {
       return currentHostname;
     }
 
-    // Add the resolved address into the visited array.
+    // Perform recursive step, adding the next address to visited.
     visited.push(address);
-
-    // Otherwise, we recursively get mappings.
     return lookupHelper(address, visited);
   };
 

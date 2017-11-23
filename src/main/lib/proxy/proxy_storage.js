@@ -50,6 +50,51 @@ export const getMapping = hostname => {
 };
 
 /**
+ * Loads the address field for a hostname mapping.
+ * @param {string} hostname
+ * @return {string}
+ */
+export const getAddress = hostname => {
+  const mapping = getMapping(hostname);
+
+  if (!mapping) {
+    return null;
+  }
+
+  return mapping.address;
+};
+
+/**
+ * Loads the Host header field for a hostname mapping.
+ * @param {string} hostname
+ * @return {string}
+ */
+export const getHostHeader = hostname => {
+  const mapping = getMapping(hostname);
+
+  if (!mapping) {
+    return null;
+  }
+
+  return mapping.hostHeader;
+};
+
+/**
+ * Loads the active field for a hostname mapping.
+ * @param {string} hostname
+ * @return {boolean}
+ */
+export const getActive = hostname => {
+  const mapping = getMapping(hostname);
+
+  if (!mapping) {
+    return null;
+  }
+
+  return mapping.active;
+};
+
+/**
  * Performs a complete replacement of all mappings.
  * @param {object} mappings
  */
