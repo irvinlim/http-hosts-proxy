@@ -1,4 +1,4 @@
-import { getAddress, getMapping } from './proxy_storage';
+import { getAddress, getHostHeader, getMapping } from './proxy_storage';
 
 import { lookupGlob } from './proxy_globs';
 
@@ -59,14 +59,14 @@ export const lookupHostHeader = hostname => {
   const mapping = getMapping(hostname);
 
   if (mapping) {
-    return mapping.hostHeader;
+    return getHostHeader(hostname);
   }
 
   // Otherwise, attempt to match a glob.
   const globMapping = lookupGlob(hostname);
 
   if (globMapping) {
-    return globMapping.hostHeader;
+    return getHostHeader(globMapping.hostname);
   }
 
   return null;

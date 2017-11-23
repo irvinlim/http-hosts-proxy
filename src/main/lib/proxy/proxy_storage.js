@@ -76,7 +76,7 @@ export const getHostHeader = hostname => {
     return null;
   }
 
-  return mapping.hostHeader;
+  return mapping.hostHeader || null;
 };
 
 /**
