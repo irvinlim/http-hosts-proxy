@@ -11,8 +11,18 @@ import { mapActions } from 'vuex';
 
 export default {
   async mounted() {
-    // Starts the proxy server.
-    await ipcAction('proxy.server.start');
+    // Start the proxy server.
+    try {
+      await ipcAction('proxy.server.start');
+    } catch (err) {
+      this.$toasted.show('Could not start server.', {
+        type: 'error',
+        icon: 'times',
+        iconPack: 'fontawesome',
+        position: 'bottom-right',
+        duration: 3000,
+      });
+    }
 
     // Hydrate the Vuex store from IPC GET.
     this.updateProxyServerStatus();
