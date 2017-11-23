@@ -55,9 +55,30 @@
           </div>
           <div class="column is-3 is-offset-3 is-2-widescreen is-offset-6-widescreen is-2-fullhd is-offset-7-fullhd">
             <div class="vert-button-group">
-              <button class="button is-primary is-outlined" v-if="!isProxyRunning" @click="handleClickStart()" :disabled="isSaving">Start</button>
-              <button class="button is-danger is-outlined" v-if="isProxyRunning" @click="handleClickStop()" ::disabled="isSaving">Stop</button>
-              <button class="button is-info is-outlined" v-if="isProxyRunning" @click="handleClickRestart()" ::disabled="isSaving">Restart</button>
+              <button
+                v-if="!isProxyRunning"
+                :class="['button', 'is-primary', 'is-outlined', { 'is-loading': isStarting }]"
+                :disabled="isSaving"
+                @click="handleClickStart()"
+                >
+                Start
+              </button>
+              <button
+                v-if="isProxyRunning"
+                :class="['button', 'is-danger', 'is-outlined', { 'is-loading': isStopping }]"
+                :disabled="isSaving"
+                @click="handleClickStop()"
+                >
+                Stop
+              </button>
+              <button
+                v-if="isProxyRunning"
+                :class="['button', 'is-info', 'is-outlined', { 'is-loading': isRestarting }]"
+                :disabled="isSaving"
+                @click="handleClickRestart()"
+                >
+                Restart
+              </button>
             </div>
           </div>
         </div>
@@ -79,6 +100,9 @@ export default {
   data: () => ({
     // Local state.
     isSaving: false,
+    isStarting: false,
+    isStopping: false,
+    isRestarting: false,
 
     // Form data.
     settings: {},
@@ -124,6 +148,7 @@ export default {
     async handleClickStart() {
       // Update saving state.
       this.isSaving = true;
+      this.isStarting = true;
 
       // Save the address and port.
       await this.saveListeningAddress();
@@ -142,17 +167,20 @@ export default {
 
       // Restore saving state.
       this.isSaving = false;
+      this.isStarting = false;
     },
 
     async handleClickStop() {
       // Update saving state.
       this.isSaving = true;
+      this.isStopping = true;
 
       // Send the event to the main process.
       await ipcAction('proxy.server.stop');
 
       // Restore saving state.
       this.isSaving = false;
+      this.isStopping = false;
 
       // Show toast.
       this.showToast('Server stopped!', 'check');
@@ -161,6 +189,7 @@ export default {
     async handleClickRestart() {
       // Update saving state.
       this.isSaving = true;
+      this.isRestarting = true;
 
       // Save the address and port.
       await this.saveListeningAddress();
@@ -179,6 +208,7 @@ export default {
 
       // Restore saving state.
       this.isSaving = false;
+      this.isRestarting = false;
     },
 
     /**
