@@ -54,8 +54,8 @@ export const countLeaves = () => {
  * @param {Object} mapping
  */
 export const addNode = mapping => {
-  // Only allow glob hostnames in the tree.
-  if (!isGlobHostname(mapping.hostname)) {
+  // Only allow globs and active hostnames.
+  if (!isGlobHostname(mapping.hostname) || !mapping.active) {
     return;
   }
 
