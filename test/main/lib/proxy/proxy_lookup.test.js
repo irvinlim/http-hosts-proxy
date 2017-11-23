@@ -3,6 +3,7 @@
 /* eslint-env mocha */
 
 import { expect } from 'chai';
+import { lookupHostHeader } from '../../../../src/main/lib/proxy/proxy_lookup';
 import proxy from '../../../../src/main/lib/proxy';
 
 const { getMappings, putMappings } = proxy.storage;
@@ -128,6 +129,63 @@ describe('lib.proxy.lookup', function() {
       expect(lookupAddress('test3.example.com')).to.be.equal(
         'test2.example.com'
       );
+    });
+  });
+
+  describe('#lookupHostHeader', function() {
+    it('should return null if there are no mappings', function() {
+      expect(lookupHostHeader('test.example.com')).to.be.null;
+    });
+
+    it('should return null if no mappings are matching', function() {
+      putMappings({
+        'test.example.com': { address: '1.2.3.4', active: true },
+      });
+      expect(lookupHostHeader('hello.mysite.net')).to.be.null;
+    });
+
+    it('should return the Host header value if there is an exact match', function() {
+      putMappings({
+        'test.example.com': {
+          address: '1.2.3.4',
+          active: true,
+          hostHeader: 'host.example.com',
+        },
+      });
+      expect(lookupHostHeader('test.example.com')).to.be.equal(
+        'host.example.com'
+      );
+    });
+
+    it('should return null if there is an exact match without a hostHeader value', function() {
+      putMappings({
+        'test.example.com': { address: '1.2.3.4', active: true },
+      });
+      expect(lookupHostHeader('test.example.com')).to.be.null;
+    });
+
+    it('should return the Host header value if there is a glob match', function() {
+      putMappings({
+        '*.example.com': {
+          address: '1.2.3.4',
+          active: true,
+          hostHeader: 'host.example.com',
+        },
+      });
+      expect(lookupHostHeader('test.example.com')).to.be.equal(
+        'host.example.com'
+      );
+      expect(lookupHostHeader('hello.example.com')).to.be.equal(
+        'host.example.com'
+      );
+    });
+
+    it('should return null if there is a glob match without a hostHeader value', function() {
+      putMappings({
+        '*.example.com': { address: '1.2.3.4', active: true },
+      });
+      expect(lookupHostHeader('test.example.com')).to.be.null;
+      expect(lookupHostHeader('hello.example.com')).to.be.null;
     });
   });
 });
