@@ -130,6 +130,31 @@ describe('lib.proxy.lookup', function() {
         'test2.example.com'
       );
     });
+
+    it('should return the same hostname if all mappings are inactive', function() {
+      putMappings({
+        'test.example.com': { address: '1.2.3.4', active: false },
+        '*.example.com': { address: '5.6.7.8', active: false },
+      });
+      expect(lookupAddress('test.example.com')).to.be.equal('test.example.com');
+    });
+
+    it('should match the glob address if the exact match is inactive', function() {
+      putMappings({
+        'test.example.com': { address: '1.2.3.4', active: false },
+        '*.example.com': { address: '5.6.7.8', active: true },
+      });
+      expect(lookupAddress('test.example.com')).to.be.equal('5.6.7.8');
+    });
+
+    it('should match the less specific glob address if a more specific glob address is inactive', function() {
+      putMappings({
+        '*.test.example.com': { address: '1.2.3.4', active: false },
+        '*.example.com': { address: '5.6.7.8', active: true },
+      });
+      expect(lookupAddress('hello.test.example.com')).to.be.equal('5.6.7.8');
+      expect(lookupAddress('test.example.com')).to.be.equal('5.6.7.8');
+    });
   });
 
   describe('#lookupHostHeader', function() {
@@ -186,6 +211,65 @@ describe('lib.proxy.lookup', function() {
       });
       expect(lookupHostHeader('test.example.com')).to.be.null;
       expect(lookupHostHeader('hello.example.com')).to.be.null;
+    });
+
+    it('should return null if all mappings are inactive', function() {
+      putMappings({
+        'test.example.com': {
+          address: '1.2.3.4',
+          active: false,
+          hostHeader: 'host.example.com',
+        },
+        '*.example.com': {
+          address: '1.2.3.4',
+          active: false,
+          hostHeader: 'host.example.com',
+        },
+      });
+      expect(lookupHostHeader('test.example.com')).to.be.null;
+      expect(lookupHostHeader('hello.example.com')).to.be.null;
+    });
+
+    it('should return the Host header for the glob if the exact match is inactive ', function() {
+      putMappings({
+        'test.example.com': {
+          address: '1.2.3.4',
+          active: false,
+          hostHeader: 'host.test.example.com',
+        },
+        '*.example.com': {
+          address: '1.2.3.4',
+          active: true,
+          hostHeader: 'host.example.com',
+        },
+      });
+      expect(lookupHostHeader('test.example.com')).to.be.equal(
+        'host.example.com'
+      );
+      expect(lookupHostHeader('hello.example.com')).to.be.equal(
+        'host.example.com'
+      );
+    });
+
+    it('should return the Host header for the less specific glob if the more specific one is inactive', function() {
+      putMappings({
+        '*.test.example.com': {
+          address: '1.2.3.4',
+          active: false,
+          hostHeader: 'host.test.example.com',
+        },
+        '*.example.com': {
+          address: '1.2.3.4',
+          active: true,
+          hostHeader: 'host.example.com',
+        },
+      });
+      expect(lookupHostHeader('hello.test.example.com')).to.be.equal(
+        'host.example.com'
+      );
+      expect(lookupHostHeader('hello.example.com')).to.be.equal(
+        'host.example.com'
+      );
     });
   });
 });
