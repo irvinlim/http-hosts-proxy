@@ -8,12 +8,16 @@ import settings from '../lib/settings';
  * Allows ipcRenderers to start the proxy server.
  */
 ipcMain.on('proxy.server.start', async event => {
-  // Get listening port number from settings.
+  // Get listening port number and address from settings.
+  const listeningAddress = settings.storage.getSetting(
+    'listeningAddress',
+    'localhost'
+  );
   const listeningPort = settings.storage.getSetting('listeningPort', 0);
 
   // Start the server.
   try {
-    await proxy.server.start(listeningPort);
+    await proxy.server.start(listeningPort, listeningAddress);
     event.sender.send('proxy.server.start.success');
   } catch (err) {
     event.sender.send('proxy.server.start.fail');
@@ -23,9 +27,9 @@ ipcMain.on('proxy.server.start', async event => {
   const isListening = proxy.server.isListening();
   event.sender.send('proxy.server.isListening.data', isListening);
 
-  // Push getAddress event.
-  const address = proxy.server.getAddress();
-  event.sender.send('proxy.server.getAddress.data', address);
+  // Push getSocketAddress event.
+  const address = proxy.server.getSocketAddress();
+  event.sender.send('proxy.server.getSocketAddress.data', address);
 });
 
 /**
@@ -44,9 +48,9 @@ ipcMain.on('proxy.server.stop', async event => {
   const isListening = proxy.server.isListening();
   event.sender.send('proxy.server.isListening.data', isListening);
 
-  // Push getAddress event.
-  const address = proxy.server.getAddress();
-  event.sender.send('proxy.server.getAddress.data', address);
+  // Push getSocketAddress event.
+  const address = proxy.server.getSocketAddress();
+  event.sender.send('proxy.server.getSocketAddress.data', address);
 });
 
 /**
@@ -55,12 +59,16 @@ ipcMain.on('proxy.server.stop', async event => {
  * Allows ipcRenderers to restart the proxy server.
  */
 ipcMain.on('proxy.server.restart', async event => {
-  // Get listening port number from settings.
+  // Get listening port number and address from settings.
+  const listeningAddress = settings.storage.getSetting(
+    'listeningAddress',
+    'localhost'
+  );
   const listeningPort = settings.storage.getSetting('listeningPort', 0);
 
   // Restart the server.
   try {
-    await proxy.server.restart(listeningPort);
+    await proxy.server.restart(listeningPort, listeningAddress);
     event.sender.send('proxy.server.restart.success');
   } catch (err) {
     event.sender.send('proxy.server.restart.fail');
@@ -73,9 +81,9 @@ ipcMain.on('proxy.server.restart', async event => {
   const isListening = proxy.server.isListening();
   event.sender.send('proxy.server.isListening.data', isListening);
 
-  // Push getAddress event.
-  const address = proxy.server.getAddress();
-  event.sender.send('proxy.server.getAddress.data', address);
+  // Push getSocketAddress event.
+  const address = proxy.server.getSocketAddress();
+  event.sender.send('proxy.server.getSocketAddress.data', address);
 });
 
 /**
@@ -89,13 +97,13 @@ ipcMain.on('proxy.server.isListening', event => {
 });
 
 /**
- * GET proxy.server.getAddress
+ * GET proxy.server.getSocketAddress
  *
  * Allows ipcRenderers to get the status of the proxy server.
  */
-ipcMain.on('proxy.server.getAddress', event => {
-  const address = proxy.server.getAddress();
-  event.sender.send('proxy.server.getAddress.data', address);
+ipcMain.on('proxy.server.getSocketAddress', event => {
+  const address = proxy.server.getSocketAddress();
+  event.sender.send('proxy.server.getSocketAddress.data', address);
 });
 
 /**

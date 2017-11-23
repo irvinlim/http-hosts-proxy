@@ -2,19 +2,20 @@ import { ipcGet, ipcReceive } from '../../helpers/ipc';
 
 const initialState = {
   isRunning: false,
-  address: '',
+  socketAddress: '',
 };
 
 const mutations = {
   SET_PROXY_SERVER_STATUS(state, status) {
     state.isRunning = status;
   },
-  SET_PROXY_SERVER_ADDRESS(state, address) {
-    if (!address) {
-      state.address = '';
+  SET_PROXY_SERVER_SOCKET_ADDRESS(state, serverAddress) {
+    if (!serverAddress) {
+      state.socketAddress = '';
     } else {
-      const { port } = address;
-      state.address = `localhost:${port}`;
+      let { port, address, family } = serverAddress;
+      address = family.toLowerCase() === 'ipv6' ? `[${address}]` : address;
+      state.socketAddress = `${address}:${port}`;
     }
   },
 };
@@ -25,8 +26,8 @@ const actions = {
     commit('SET_PROXY_SERVER_STATUS', status);
   },
   async updateProxyServerAddress({ commit }) {
-    const address = await ipcGet('proxy.server.getAddress');
-    commit('SET_PROXY_SERVER_ADDRESS', address);
+    const address = await ipcGet('proxy.server.getSocketAddress');
+    commit('SET_PROXY_SERVER_SOCKET_ADDRESS', address);
   },
   listenProxyServerStatus({ commit }) {
     ipcReceive('proxy.server.isListening', async data => {
@@ -34,8 +35,8 @@ const actions = {
     });
   },
   listenProxyServerAddress({ commit }) {
-    ipcReceive('proxy.server.getAddress', async data => {
-      commit('SET_PROXY_SERVER_ADDRESS', data);
+    ipcReceive('proxy.server.getSocketAddress', async data => {
+      commit('SET_PROXY_SERVER_SOCKET_ADDRESS', data);
     });
   },
 };

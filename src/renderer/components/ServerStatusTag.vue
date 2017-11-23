@@ -25,7 +25,7 @@
       <div class="field-body">
         <div class="field">
           <p class="control">
-            <span class="tag">{{ address }}</span>
+            <span class="tag">{{ socketAddress }}</span>
           </p>
         </div>
       </div>
@@ -39,7 +39,7 @@ import { mapState } from 'vuex';
 export default {
   computed: mapState({
     isRunning: state => state.ProxyServer.isRunning,
-    address: state => state.ProxyServer.address,
+    socketAddress: state => state.ProxyServer.socketAddress,
   }),
 };
 </script>

@@ -119,28 +119,28 @@ export const isListening = () => {
   return server.listening;
 };
 
-export const getAddress = () => {
+export const getSocketAddress = () => {
   return server.address();
 };
 
-export const start = port => {
+export const start = (port = 0, address = 'localhost') => {
   if (isListening()) {
-    log.info(`Server already started on localhost:${server.address().port}.`);
+    log.info(`Server already started on ${address}:${server.address().port}.`);
     return Promise.resolve();
   }
 
-  // Start listening on port.
-  server.listen(port, 'localhost');
+  // Start listening on specified port and address.
+  server.listen(port, address);
 
   // Wait on either listening or error events to resolve the Promise.
   return new Promise((resolve, reject) => {
     server.on('listening', () => {
-      log.info(`Server started on localhost:${port}.`);
+      log.info(`Server started on ${address}:${port}.`);
       resolve();
     });
 
     server.on('error', () => {
-      log.error(`Could not start server on localhost:${port}.`);
+      log.error(`Could not start server on ${address}:${port}.`);
       reject();
     });
   });
@@ -160,7 +160,7 @@ export const stop = () => {
   );
 };
 
-export const restart = async port => {
+export const restart = async (port = 0, address = '') => {
   await stop();
-  await start(port);
+  await start(port, address);
 };

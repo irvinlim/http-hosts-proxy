@@ -14,7 +14,27 @@
 
             <div class="field is-horizontal is-small-field">
               <div class="field-label is-small is-normal">
-                <label for="listeningPort" class="label">Change port:</label>
+                <label for="listeningAddress" class="label">Listening address:</label>
+              </div>
+
+              <div class="field-body">
+                <div class="field">
+                  <p class="control">
+                    <input
+                      class="input is-small"
+                      type="text"
+                      name="listeningAddress"
+                      placeholder="localhost"
+                      v-model="settings.listeningAddress"
+                      >
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="field is-horizontal is-small-field">
+              <div class="field-label is-small is-normal">
+                <label for="listeningPort" class="label">Port number:</label>
               </div>
 
               <div class="field-body">
@@ -31,6 +51,7 @@
                 </div>
               </div>
             </div>
+
           </div>
           <div class="column is-3 is-offset-3 is-2-widescreen is-offset-6-widescreen is-2-fullhd is-offset-7-fullhd">
             <div class="vert-button-group">
@@ -77,6 +98,16 @@ export default {
       this.settings = await ipcGet('settings.storage.getSettings');
     },
 
+    async saveListeningAddress() {
+      // Construct data to save.
+      const data = {
+        key: 'listeningAddress',
+        value: this.settings.listeningAddress,
+      };
+
+      await ipcPut('settings.storage.saveSetting', data);
+    },
+
     async saveListeningPort() {
       // Only allow integer port numbers.
       this.settings.listeningPort = parseInt(this.settings.listeningPort) || '';
@@ -94,7 +125,8 @@ export default {
       // Update saving state.
       this.isSaving = true;
 
-      // Save the port number first.
+      // Save the address and port.
+      await this.saveListeningAddress();
       await this.saveListeningPort();
 
       // Send the event to the main process.
@@ -102,8 +134,9 @@ export default {
         await ipcAction('proxy.server.start');
         this.showToast('Server started!', 'check');
       } catch (err) {
+        const address = this.settings.listeningAddress || 'localhost';
         const port = this.settings.listeningPort;
-        const errorMessage = `Could not start server at port ${port}.`;
+        const errorMessage = `Could not start server at ${address}:${port}.`;
         this.showToast(errorMessage, 'times');
       }
 
@@ -129,7 +162,8 @@ export default {
       // Update saving state.
       this.isSaving = true;
 
-      // Save the port number first.
+      // Save the address and port.
+      await this.saveListeningAddress();
       await this.saveListeningPort();
 
       // Send the event to the main process.
@@ -137,8 +171,9 @@ export default {
         await ipcAction('proxy.server.restart');
         this.showToast('Server restarted!', 'check');
       } catch (err) {
+        const address = this.settings.listeningAddress || 'localhost';
         const port = this.settings.listeningPort;
-        const errorMessage = `Could not start server at port ${port}.`;
+        const errorMessage = `Could not start server at ${address}:${port}.`;
         this.showToast(errorMessage, 'times');
       }
 
