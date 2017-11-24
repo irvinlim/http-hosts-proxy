@@ -1,9 +1,8 @@
 # HTTP Hosts Proxy
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/irvinlim/http-hosts-proxy.svg)](https://greenkeeper.io/)
-
 [![Travis CI](https://img.shields.io/travis/irvinlim/http-hosts-proxy.svg)](https://travis-ci.org/irvinlim/http-hosts-proxy)
 [![AppVeyor](https://ci.appveyor.com/api/projects/status/github/irvinlim/http-hosts-proxy?retina=true&svg=true)](https://ci.appveyor.com/project/irvinlim/http-hosts-proxy)
+[![Greenkeeper badge](https://badges.greenkeeper.io/irvinlim/http-hosts-proxy.svg)](https://greenkeeper.io/)
 [![GitHub](https://img.shields.io/github/release/irvinlim/http-hosts-proxy.svg)](https://github.com/irvinlim/http-hosts-proxy/releases)
 [![The MIT License](https://img.shields.io/badge/license-MIT-orange.svg)](http://opensource.org/licenses/MIT)
 

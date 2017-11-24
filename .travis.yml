@@ -27,10 +27,15 @@ install:
 - nvm install 7
 - curl -o- -L https://yarnpkg.com/install.sh | bash
 - source ~/.bashrc
+- yarn global add greenkeeper-lockfile@1
 - yarn
+before_script:
+- greenkeeper-lockfile-update
 script:
 - yarn run test
 - yarn run build
+after_script:
+- greenkeeper-lockfile-upload
 branches:
   only:
   - master
