@@ -19,8 +19,35 @@
           <br>
           <p class="is-size-7"><strong>Recursive Mappings</strong></p>
           <p class="is-size-7">You may map a hostname to another hostname in the list, as they will be recursively resolved. This may be useful if you often have to switch the addresses for a group of hostnames.</p>
+          <br>
+          <p class="is-size-7"><strong>Custom Host Headers</strong></p>
+          <p class="is-size-7">Sometimes, you might actually want to send a custom Host header in the request. By default, {{ appName }} will forward the Host header that it receives, or falls back on the hostname in the request line. Specify a custom Host header to override these defaults.</p>
         </div>
       </article>
+
+      <div class="columns" style="margin-bottom: 0;">
+        <div class="column is-tiny-column">
+          <span class="icon is-small has-text-success"></span>
+        </div>
+        <div class="column">
+          <p class="is-size-7">
+            <strong>Hostname</strong>
+          </p>
+        </div>
+        <div class="column">
+          <p class="is-size-7">
+            <strong>Target Address</strong>
+          </p>
+        </div>
+        <div class="column">
+          <p class="is-size-7">
+            <strong>Host Header (optional)</strong>
+          </p>
+        </div>
+        <div class="column is-tiny-column">
+          <span class="icon is-small has-text-success"></span>
+        </div>
+      </div>
 
       <div class="columns" v-for="(mapping, index) in mappings" :key="index">
         <div class="column is-tiny-column">
@@ -41,7 +68,7 @@
                 :class="['input is-small', { 'is-danger': errors.has(`hostname[${index}]`) }]"
                 :name="'hostname[' + index + ']'"
                 type="text"
-                placeholder="Hostname (e.g. google.com)"
+                placeholder="e.g. mywebsite.local"
                 v-model="mapping.hostname"
                 v-validate="{ required: true, valid_hostname: true }"
                 data-vv-as="hostname"
@@ -58,7 +85,7 @@
                 :class="['input is-small', { 'is-danger': errors.has(`address[${index}]`) }]"
                 :name="'address[' + index + ']'"
                 type="text"
-                placeholder="Address to resolve to (e.g. 8.8.8.8)"
+                placeholder="e.g. localhost"
                 v-model="mapping.address"
                 v-validate="{ required: true, valid_address: true }"
                 data-vv-as="address"
@@ -75,7 +102,7 @@
                 :class="['input is-small', { 'is-danger': errors.has(`hostHeader[${index}]`) }]"
                 :name="'hostHeader[' + index + ']'"
                 type="text"
-                placeholder="Host header (defaults to hostname)"
+                placeholder="Default"
                 v-model="mapping.hostHeader"
                 v-validate="{ valid_host_header: true }"
                 data-vv-as="hostHeader"
@@ -97,9 +124,10 @@
           </div>
         </div>
       </div>
-      <div class="columns">
-        <div class="column">
-          <button class="button is-small add-new" @click="handleClickAddNew()">
+
+      <div class="columns is-centered">
+        <div class="column is-4 add-new">
+          <button class="button is-info is-small" @click="handleClickAddNew()">
             <span class="icon">
               <i class="fa fa-plus-circle"></i>
             </span>
@@ -107,6 +135,7 @@
           </button>
         </div>
       </div>
+
     </section>
 
     <footer>
@@ -242,8 +271,8 @@ section.main {
   padding: 20px 0;
 }
 
-button.button.add-new {
-  width: 100%;
+.column.add-new {
+  text-align: center;
 }
 
 .is-tiny-column {
