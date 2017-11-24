@@ -23,6 +23,8 @@ export const create = () => {
   mainWindow = createWindow('main', {
     width: 1200,
     height: 900,
+    minWidth: 800,
+    minHeight: 600,
   });
 
   // Load the main HTML page.
