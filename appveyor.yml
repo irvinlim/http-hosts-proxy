@@ -19,8 +19,8 @@ init:
 
 install:
   - ps: Install-Product node 7 x64
-  - choco install yarn --ignore-dependencies
   - git reset --hard HEAD
+  - npm install yarn -g
   - yarn
   - node --version
 
