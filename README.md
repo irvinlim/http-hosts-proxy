@@ -1,9 +1,9 @@
 # http-hosts-proxy
 
-[![Travis CI](https://img.shields.io/travis/irvinlim/http-hosts-proxy.svg?style=flat-square)](https://travis-ci.org/irvinlim/http-hosts-proxy)
-[![AppVeyor](https://img.shields.io/appveyor/ci/irvinlim/http-hosts-proxy.svg?style=flat-square)](https://ci.appveyor.com/project/irvinlim/http-hosts-proxy)
-[![GitHub](https://img.shields.io/github/release/irvinlim/http-hosts-proxy.svg?style=flat-square)](https://github.com/irvinlim/http-hosts-proxy/releases)
-[![The MIT License](https://img.shields.io/badge/license-MIT-orange.svg?style=flat-square)](http://opensource.org/licenses/MIT)
+[![Travis CI](https://img.shields.io/travis/irvinlim/http-hosts-proxy.svg)](https://travis-ci.org/irvinlim/http-hosts-proxy)
+[![AppVeyor](https://ci.appveyor.com/api/projects/status/github/irvinlim/http-hosts-proxy?retina=true&svg=true)](https://ci.appveyor.com/project/irvinlim/http-hosts-proxy)
+[![GitHub](https://img.shields.io/github/release/irvinlim/http-hosts-proxy.svg)](https://github.com/irvinlim/http-hosts-proxy/releases)
+[![The MIT License](https://img.shields.io/badge/license-MIT-orange.svg)](http://opensource.org/licenses/MIT)
 
 **http-hosts-proxy** is a HTTP(S) proxy server for hostname-based mapping to custom addresses, based on [Electron](https://electronjs.org) and [Vue](https://vuejs.org). It is primarily a developer tool for users who constantly have to switch between hosts.
 
