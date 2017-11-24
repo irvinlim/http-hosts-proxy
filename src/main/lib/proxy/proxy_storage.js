@@ -39,13 +39,59 @@ export const getMappings = () => {
  * @param {string} hostname
  */
 export const getMapping = hostname => {
-  const address = loadedMappings[hostname];
+  const data = loadedMappings[hostname];
 
-  if (!address || !address.length) {
+  // Don't return if it is inactive.
+  if (!data || !data.active) {
     return null;
   }
 
-  return address;
+  return data;
+};
+
+/**
+ * Loads the address field for a hostname mapping.
+ * @param {string} hostname
+ * @return {string}
+ */
+export const getAddress = hostname => {
+  const mapping = getMapping(hostname);
+
+  if (!mapping) {
+    return null;
+  }
+
+  return mapping.address;
+};
+
+/**
+ * Loads the Host header field for a hostname mapping.
+ * @param {string} hostname
+ * @return {string}
+ */
+export const getHostHeader = hostname => {
+  const mapping = getMapping(hostname);
+
+  if (!mapping) {
+    return null;
+  }
+
+  return mapping.hostHeader || null;
+};
+
+/**
+ * Loads the active field for a hostname mapping.
+ * @param {string} hostname
+ * @return {boolean}
+ */
+export const getActive = hostname => {
+  const mapping = getMapping(hostname);
+
+  if (!mapping) {
+    return null;
+  }
+
+  return mapping.active;
 };
 
 /**
@@ -64,14 +110,14 @@ export const putMappings = mappings => {
  * Adds or updates the hostname mapping for a given hostname to a given address.
  * Also saves the mapping to local storage.
  * @param {string} hostname
- * @param {string} address
+ * @param {Object} data
  */
-export const upsertMapping = (hostname, address) => {
+export const upsertMapping = (hostname, data) => {
   // Load mappings if necessary first.
   loadFromStorage();
 
   // Updates the local dictionary.
-  loadedMappings[hostname] = address;
+  loadedMappings[hostname] = data;
 
   // Persist the change to disk.
   saveIntoStorage();
@@ -121,7 +167,7 @@ const convertDictToArray = mappingsDict => {
   for (let hostname in mappingsDict) {
     array.push({
       hostname,
-      address: mappingsDict[hostname],
+      ...mappingsDict[hostname],
     });
   }
 

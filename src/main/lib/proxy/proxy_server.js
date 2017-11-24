@@ -1,8 +1,9 @@
+import { lookupAddress, lookupHostHeader } from './proxy_lookup';
+
 import URL from 'url-parse';
 import http from 'http';
 import httpProxy from 'http-proxy';
 import log from 'electron-log';
-import { lookup } from './proxy_lookup';
 import net from 'net';
 
 // Instantiates a proxy server for forwarding requests.
@@ -13,16 +14,17 @@ const server = http.createServer();
 
 // Handle HTTP requests.
 server.on('request', function(req, res) {
-  let { protocol, host, hostname, port, pathname, query } = new URL(req.url);
+  let { protocol, hostname, port, pathname, query } = new URL(req.url);
 
   // Default to HTTP if not specified.
   port = port || 80;
 
-  // Default Host header to the parsed host in the URL.
-  const hostHeader = req.headers.host || host;
-
   // Recursively lookup address that hostname should resolve to.
-  const resolved = lookup(hostname);
+  const resolved = lookupAddress(hostname);
+
+  // Look up the Host header in the hostname mappings, or otherwise default to
+  // the Host header in the request, or the hostname in the parsed URL.
+  const hostHeader = lookupHostHeader(hostname) || req.headers.host || hostname;
 
   // Get the new URL that we want to proxy to.
   const newUrl = `${protocol}//${resolved}:${port}${pathname}${query}`;
@@ -53,7 +55,7 @@ server.on('connect', function(req, socket) {
   const [hostname, port] = req.url.split(':', 2);
 
   // Recursively lookup address that hostname should resolve to.
-  const resolved = lookup(hostname);
+  const resolved = lookupAddress(hostname);
 
   // Get the new address that we want to make a CONNECT tunnel to.
   const newUrl = `${resolved}:${port}`;

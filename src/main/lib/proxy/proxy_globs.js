@@ -54,8 +54,8 @@ export const countLeaves = () => {
  * @param {Object} mapping
  */
 export const addNode = mapping => {
-  // First check if it is a glob mapping.
-  if (!isGlobMapping(mapping)) {
+  // Only allow globs and active hostnames.
+  if (!isGlobHostname(mapping.hostname) || !mapping.active) {
     return;
   }
 
@@ -138,7 +138,7 @@ export const lookupGlob = hostname => {
 };
 
 /**
- * Determines if a given hostname mapping is a glob.
- * @param {Object} mapping
+ * Determines if a given hostname is a glob.
+ * @param {string} hostname
  */
-const isGlobMapping = mapping => mapping.hostname.indexOf('*.') === 0;
+export const isGlobHostname = hostname => hostname.indexOf('*.') === 0;

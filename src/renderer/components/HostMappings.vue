@@ -23,6 +23,17 @@
       </article>
 
       <div class="columns" v-for="(mapping, index) in mappings" :key="index">
+        <div class="column is-tiny-column">
+          <a href="#" @click.prevent="mapping.active = !mapping.active">
+            <span class="icon is-small has-text-success" v-if="mapping.active">
+              <i class="fa fa-check-circle"></i>
+            </span>
+            <span class="icon is-small has-text-danger" v-else>
+              <i class="fa fa-times-circle"></i>
+            </span>
+          </a>
+        </div>
+
         <div class="column">
           <div class="field">
             <div class="control">
@@ -39,6 +50,7 @@
             <p class="help is-danger" v-if="errors.has(`hostname[${index}]`)">{{ errors.first(`hostname[${index}]`) }}</p>
           </div>
         </div>
+
         <div class="column">
           <div class="field">
             <div class="control">
@@ -55,7 +67,25 @@
             <p class="help is-danger" v-if="errors.has(`address[${index}]`)">{{ errors.first(`address[${index}]`) }}</p>
           </div>
         </div>
-        <div class="column edit-actions">
+
+        <div class="column">
+          <div class="field">
+            <div class="control">
+              <input
+                :class="['input is-small', { 'is-danger': errors.has(`hostHeader[${index}]`) }]"
+                :name="'hostHeader[' + index + ']'"
+                type="text"
+                placeholder="Host header (defaults to hostname)"
+                v-model="mapping.hostHeader"
+                v-validate="{ valid_host_header: true }"
+                data-vv-as="hostHeader"
+                >
+            </div>
+            <p class="help is-danger" v-if="errors.has(`hostHeader[${index}]`)">{{ errors.first(`hostHeader[${index}]`) }}</p>
+          </div>
+        </div>
+
+        <div class="column is-tiny-column">
           <div class="columns is-gapless">
             <div class="column">
               <button class="button is-small" @click="handleClickDelete(index)">
@@ -119,7 +149,7 @@ export default {
 
       // Convert dictionary into an array of objects.
       for (let hostname in mappings) {
-        this.mappings.push({ hostname, address: mappings[hostname] });
+        this.mappings.push({ hostname, ...mappings[hostname] });
       }
     },
 
@@ -137,6 +167,8 @@ export default {
       this.mappings.push({
         hostname: '',
         address: '',
+        hostHeader: '',
+        active: true,
       });
     },
 
@@ -172,14 +204,14 @@ export default {
 
       // Iterate through all mapping objects.
       for (let mapping of this.mappings) {
-        const { hostname, address } = mapping;
+        const { hostname, ...data } = mapping;
 
         // Skip any entries which have missing values.
-        if (!hostname || !address) {
+        if (!hostname || !data.address) {
           continue;
         }
 
-        newMappings[hostname] = address;
+        newMappings[hostname] = data;
       }
 
       // Push via IPC.
@@ -214,7 +246,7 @@ button.button.add-new {
   width: 100%;
 }
 
-.edit-actions {
+.is-tiny-column {
   flex-grow: 0;
 }
 </style>

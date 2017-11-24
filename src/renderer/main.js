@@ -37,6 +37,15 @@ VeeValidate.Validator.extend('valid_address', {
   },
 });
 
+VeeValidate.Validator.extend('valid_host_header', {
+  getMessage() {
+    return 'The Host header is invalid.';
+  },
+  validate(value) {
+    return hostnameRegex.test(value);
+  },
+});
+
 /* eslint-disable no-new */
 new Vue({
   components: { App },
