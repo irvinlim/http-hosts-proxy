@@ -30,7 +30,7 @@ install:
 - npm install -g xvfb-maybe
 - yarn
 script:
-- npm run test
+- yarn run test
 - yarn run build
 branches:
   only:
