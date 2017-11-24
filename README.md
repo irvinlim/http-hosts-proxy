@@ -1,5 +1,10 @@
 # http-hosts-proxy
 
+[![Travis CI](https://img.shields.io/travis/irvinlim/http-hosts-proxy.svg?style=flat-square)](https://travis-ci.org/irvinlim/http-hosts-proxy)
+[![AppVeyor](https://img.shields.io/appveyor/ci/irvinlim/http-hosts-proxy.svg?style=flat-square)](https://ci.appveyor.com/project/irvinlim/http-hosts-proxy)
+[![GitHub](https://img.shields.io/github/release/irvinlim/http-hosts-proxy.svg?style=flat-square)](https://github.com/irvinlim/http-hosts-proxy/releases)
+[![The MIT License](https://img.shields.io/badge/license-MIT-orange.svg?style=flat-square)](http://opensource.org/licenses/MIT)
+
 **http-hosts-proxy** is a HTTP(S) proxy server for hostname-based mapping to custom addresses, based on [Electron](https://electronjs.org) and [Vue](https://vuejs.org). It is primarily a developer tool for users who constantly have to switch between hosts.
 
 A Google Chrome extension that natively integrates with **http-hosts-proxy** is planned for and development is underway. This would help you to configure Google Chrome's proxy settings automatically based on hostname, as well as additional features for ease of use.
@@ -28,6 +33,25 @@ Additionally, if you ever needed to switch between IP addresses without modifyin
 1. Modify your browser or OS settings to use **http-hosts-proxy** as your proxy server.
 
 This will cause traffic to go through the proxy. Any hostname mappings that are configured within **http-hosts-proxy** will be proxied to the specified address, while all other traffic will simply be passed through.
+
+## Build setup
+
+```sh
+# Install dependencies
+npm install
+
+# Serve with hot reload
+npm run dev
+
+# Run tests
+npm run test
+
+# Lint all src and test code
+npm run lint
+
+# Build for production
+npm run build
+```
 
 ## License
 
