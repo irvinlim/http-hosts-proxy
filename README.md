@@ -1,6 +1,6 @@
 # http-hosts-proxy
 
-**http-hosts-proxy** is a HTTP(S) proxy server for hostname-based mapping to custom addresses, based on [Electron](https://electronjs.org) and [Vue](https://vuejs.org).
+**http-hosts-proxy** is a HTTP(S) proxy server for hostname-based mapping to custom addresses, based on [Electron](https://electronjs.org) and [Vue](https://vuejs.org). It is primarily a developer tool for users who constantly have to switch between hosts.
 
 A Google Chrome extension that natively integrates with **http-hosts-proxy** is planned for and development is underway. This would help you to configure Google Chrome's proxy settings automatically based on hostname, as well as additional features for ease of use.
 
@@ -8,7 +8,9 @@ A Google Chrome extension that natively integrates with **http-hosts-proxy** is 
 
 If you do local web development you might have needed to do edit `/etc/hosts` to resolve a custom hostname such as `mysite.local` to `localhost`, for example. It has always been a hassle to edit the file manually, especially if you often have to add new hostnames or subdomains.
 
-Additionally, if you ever needed to switch between IP addresses without modifying your public DNS records, you might have needed to constantly edit `/etc/hosts` to toggle between IP addresses
+Additionally, if you ever needed to switch between IP addresses without modifying your public DNS records, you might have needed to constantly edit `/etc/hosts` to toggle between IP addresses. Your browser may have also cached DNS lookups, which makes it even more of a hassle to go through.
+
+**http-hosts-proxy** helps developers to solve these problems using a proxy server to serve your requests instead. Similar to how one can use a reverse proxy to easily load balance between origins, this helps you to easily configure hostname mappings to target addresses.
 
 ## Features
 
